@@ -1,5 +1,25 @@
 <template>
     <div class="main">
-        <p>Hello world!</p>
+        <div class="slds-vertical-tabs">
+            <ul class="slds-vertical-tabs__nav" role="tablist" aria-orientation="vertical">
+                <template for:each={boards} for:item="board" for:index="index">
+                    <li class="slds-vertical-tabs__nav-item slds-is-active" title={board.Name} role="presentation" key={board.Id}>
+                        <a class="slds-vertical-tabs__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="slds-vertical-tabs-0" id="slds-vertical-tabs-0__nav">
+                            <span class="slds-vertical-tabs__left-icon"></span>
+                            <span class="slds-truncate" title={board.Name}>{board.Name}</span>
+                            <span class="slds-vertical-tabs__right-icon"></span>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
     </div>
 </template>
+            <!-- <div class="slds-vertical-tabs__content slds-show" id="slds-vertical-tabs-0" role="tabpanel" aria-labelledby="slds-vertical-tabs-0__nav">
+                <div class="slds-text-longform">
+                    <h3 class="slds-text-heading_medium">Tab Title</h3>
+                    <p>Content for Tab 1</p>
+                    <p>Lorem ipsum dolor...</p>
+                    <p>Lorem ipsum dolor...</p>
+                </div>
+            </div> -->
