@@ -1,6 +1,7 @@
 <template>
     <div class="main">
         <div class="slds-vertical-tabs">
+            <!-- sections -->
             <ul class="slds-vertical-tabs__nav" role="tablist" aria-orientation="vertical">
                 <template for:each={boards} for:item="board" for:index="index">
                     <li class="slds-vertical-tabs__nav-item slds-is-active" title={board.Name} role="presentation" key={board.Id}>
@@ -10,11 +11,17 @@
                             <span class="slds-vertical-tabs__right-icon"></span>
                         </a>
                     </li>
+                    <!-- <div class="slds-grid" key={board.Id}>
+                        <template for:each={columns} for:item="column" for:index="index">
+                            <div class="slds-col" key={column.Id}>
+
+                            </div>
+                        </template>
+                    </div> -->
                 </template>
             </ul>
-        </div>
-    </div>
-</template>
+            <!-- sections end -->
+            <!-- colum headers -->
             <!-- <div class="slds-vertical-tabs__content slds-show" id="slds-vertical-tabs-0" role="tabpanel" aria-labelledby="slds-vertical-tabs-0__nav">
                 <div class="slds-text-longform">
                     <h3 class="slds-text-heading_medium">Tab Title</h3>
@@ -23,3 +30,6 @@
                     <p>Lorem ipsum dolor...</p>
                 </div>
             </div> -->
+        </div>
+    </div>
+</template>
