@@ -1,35 +1,23 @@
 <template>
     <div class="main">
-        <div class="slds-vertical-tabs">
-            <!-- sections -->
-            <ul class="slds-vertical-tabs__nav" role="tablist" aria-orientation="vertical">
-                <template for:each={boards} for:item="board" for:index="index">
-                    <li class="slds-vertical-tabs__nav-item slds-is-active" title={board.Name} role="presentation" key={board.Id}>
-                        <a class="slds-vertical-tabs__link" href="#" role="tab" tabindex="0" aria-selected="true" aria-controls="slds-vertical-tabs-0" id="slds-vertical-tabs-0__nav">
-                            <span class="slds-vertical-tabs__left-icon"></span>
-                            <span class="slds-truncate" title={board.Name}>{board.Name}</span>
-                            <span class="slds-vertical-tabs__right-icon"></span>
-                        </a>
-                    </li>
-                    <!-- <div class="slds-grid" key={board.Id}>
-                        <template for:each={columns} for:item="column" for:index="index">
-                            <div class="slds-col" key={column.Id}>
+        <lightning-tabset variant="vertical">
+            <template for:each={boards} for:item="board" for:index="index">
+                <lightning-tab label={board.Name} key={board.Id}>
 
+                    <div class="slds-grid">
+                        <template for:each={board.Board_columns__r} for:item="column" for:index="index">
+                            <div key={column.Id} class="slds-col slds-size_1-of-12">
+                                <article class="slds-m-horizontal_xx-small slds-card">
+                                    <div class="slds-card_header">
+                                        {column.Name}
+                                    </div>
+                                </article>
                             </div>
                         </template>
-                    </div> -->
-                </template>
-            </ul>
-            <!-- sections end -->
-            <!-- colum headers -->
-            <!-- <div class="slds-vertical-tabs__content slds-show" id="slds-vertical-tabs-0" role="tabpanel" aria-labelledby="slds-vertical-tabs-0__nav">
-                <div class="slds-text-longform">
-                    <h3 class="slds-text-heading_medium">Tab Title</h3>
-                    <p>Content for Tab 1</p>
-                    <p>Lorem ipsum dolor...</p>
-                    <p>Lorem ipsum dolor...</p>
-                </div>
-            </div> -->
-        </div>
+                    </div>
+
+                </lightning-tab>
+            </template>
+        </lightning-tabset>
     </div>
 </template>

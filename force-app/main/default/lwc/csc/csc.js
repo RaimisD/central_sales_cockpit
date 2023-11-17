@@ -1,4 +1,4 @@
-import { api, LightningElement, wire } from 'lwc';
+import { api, LightningElement, wire, track } from 'lwc';
 import { getRecord, getRecords, getRecordUi } from 'lightning/uiRecordApi';
 import { getObjectInfo, getObjectInfos } from 'lightning/uiObjectInfoApi';
 import { getListInfoByName, getListInfosByName } from "lightning/uiListsApi";
@@ -18,44 +18,26 @@ export default class Csc extends LightningElement {
 
 
     connectedCallback() {
-        this.loadBoards();
-        this.loadColumns();
+        //this.loadColumns();
     }
-    //test
-    loadBoards() {
-        getBoardRecords()
-        .then(result => {
-            this.boards = result;
-            console.log('board result: ', result);
-            this.error = undefined;
-        })
-        .catch(error => {
-            this.error = error;
+
+    @track boards;
+    @track error;
+
+    @wire(getBoardRecords)
+    wiredBoards({error, data}){
+        if(data){
+            console.log('board data: ',data)
+            this.boards = data;
+            //this.error = undefined;
+        }
+        else if(error){
+            console.log('error 1: ', error);
+            //this.error = error;
             this.boards = undefined;
-            console.log('error, no data');
-        });
+        }
     }
-    // processResults(data) {
-    //     this.tabData = data.map((board, index) => ({
-    //         id: board.Id,
-    //         name: board.Name,
-    //         tabIndex: index,
-    //         active: index === 0 // First tab active by default
-    //     }));
-    // }
-    loadColumns(){
-        getBoardColumns()
-        .then(result => {
-            this.columns = result;
-            console.log('column result: ', result);
-            this.error = undefined;
-        })
-        .catch(error => {
-            this.error = error;
-            this.columns = undefined;
-            console.log('error, no data');
-        });
-    }
+    @track columns;
 
     @wire(getObjectInfo, {objectApiName: BOARD_OBEJCT})
     objInfo({error, data}){
