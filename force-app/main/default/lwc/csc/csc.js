@@ -4,8 +4,10 @@ import { getObjectInfo, getObjectInfos } from 'lightning/uiObjectInfoApi';
 import { getListInfoByName, getListInfosByName } from "lightning/uiListsApi";
 import { getListUi } from 'lightning/uiListApi';
 
+
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
-import getBoardColumns from '@salesforce/apex/boardController.getBoardColumns';
+//import getBoardColumns from '@salesforce/apex/boardController.getBoardColumns';
+import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
 
 import BOARD_OBEJCT from '@salesforce/schema/Board__c';
 
@@ -16,11 +18,9 @@ export default class Csc extends LightningElement {
     @api error;
     @api tabData;
 
-
     connectedCallback() {
-        //this.loadColumns();
-    }
 
+    }
     @track boards;
     @track error;
 
@@ -36,6 +36,9 @@ export default class Csc extends LightningElement {
             //this.error = error;
             this.boards = undefined;
         }
+        else if(!data){
+            console.log('no data 1');
+        }
     }
     @track columns;
 
@@ -45,10 +48,23 @@ export default class Csc extends LightningElement {
             console.log('object info: ',data);
         }
         else if(!data){
-            console.log('no data 1');
+            console.log('no data 2');
         }
         else if(error){
-            console.log('error: ', error);
+            console.log('error 2: ', error);
+        }
+    }
+
+    @wire(getColumRecords)
+    wiredRecords({error, data}){
+        if(data){
+            console.log('column records: ',data);
+        }
+        else if(!data){
+            console.log('no data 3');
+        }
+        else if(error){
+            console.log('error 3: ', error);
         }
     }
 }

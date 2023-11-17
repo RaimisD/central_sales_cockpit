@@ -3,19 +3,13 @@
         <lightning-tabset variant="vertical">
             <template for:each={boards} for:item="board" for:index="index">
                 <lightning-tab label={board.Name} key={board.Id}>
-
                     <div class="slds-grid">
                         <template for:each={board.Board_columns__r} for:item="column" for:index="index">
-                            <div key={column.Id} class="slds-col slds-size_1-of-12">
-                                <article class="slds-m-horizontal_xx-small slds-card">
-                                    <div class="slds-card_header">
-                                        {column.Name}
-                                    </div>
-                                </article>
+                            <div key={column.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small">
+                                <lightning-card title={column.Name}></lightning-card>
                             </div>
                         </template>
                     </div>
-
                 </lightning-tab>
             </template>
         </lightning-tabset>
