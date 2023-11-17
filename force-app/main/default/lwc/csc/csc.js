@@ -21,7 +21,7 @@ export default class Csc extends LightningElement {
         this.loadBoards();
         this.loadColumns();
     }
-
+    //test
     loadBoards() {
         getBoardRecords()
         .then(result => {
