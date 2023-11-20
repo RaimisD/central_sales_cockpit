@@ -3,12 +3,45 @@
         <lightning-tabset variant="vertical">
             <template for:each={boards} for:item="board" for:index="index">
                 <lightning-tab label={board.Name} key={board.Id}>
-                    <div class="slds-grid">
+                    <div class="slds-grid slds-box slds-theme_shade">
                         <template for:each={board.Board_columns__r} for:item="column" for:index="index">
-                            <div key={column.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small">
-                                <lightning-card title={column.Name}></lightning-card>
+                            <div key={column.Id} class="slds-col slds-box slds-size_1-of-12 slds-m-horizontal_xx-small slds-theme_alert-texture">
+                                <lightning-card title={column.Name}>
+                                    <p>{column.Id}</p>
+                                </lightning-card>
+                                <div class="slds-box slds-theme_shade">
+                                    <template for:each={board.Accounts__r} for:item="Acc" for:index="index">
+                                        <div key={Acc.Id}>
+                                            <lightning-card title={Acc.Name}>
+                                                <p>{Acc.Board_column__c}</p>
+                                            </lightning-card>
+                                        </div>
+                                    </template>
+                                    <template for:each={board.Contacts__r} for:item="Contact" for:index="index">
+                                        <div key={Contact.Id}>
+                                            <lightning-card title={Contact.Name}>
+                                                <p>{Contact.Board_column__c}</p>
+                                            </lightning-card>
+                                        </div>
+                                    </template>
+                                    <template for:each={board.Leads__r} for:item="Lead" for:index="index">
+                                        <div key={Lead.Id}>
+                                            <lightning-card title={Lead.Name}>
+                                                <p>{Lead.Board_column__c}</p>
+                                            </lightning-card>
+                                        </div>
+                                    </template>
+                                    <template for:each={board.Opportunities__r} for:item="Opp" for:index="index">
+                                        <div key={Opp.Id}>
+                                            <lightning-card title={Opp.Name}>
+                                                <p>{Opp.Board_column__c}</p>
+                                            </lightning-card>
+                                        </div>
+                                    </template>
+                                </div>
+                                
                             </div>
-                        </template>
+                        </template>                      
                     </div>
                 </lightning-tab>
             </template>

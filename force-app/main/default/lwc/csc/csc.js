@@ -10,6 +10,10 @@ import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
 
 import BOARD_OBEJCT from '@salesforce/schema/Board__c';
+import BOARD_COLUMN_OBJECT from '@salesforce/schema/Board_column__c'
+import ACCOUNT_OBJECT from '@salesforce/schema/Account';
+import OPPORTUNITY_OBJECT from '@salesforce/schema/Opportunity';
+
 
 export default class Csc extends LightningElement {
 
@@ -29,18 +33,35 @@ export default class Csc extends LightningElement {
         if(data){
             console.log('board data: ',data)
             this.boards = data;
-            //this.error = undefined;
         }
         else if(error){
             console.log('error 1: ', error);
-            //this.error = error;
             this.boards = undefined;
         }
         else if(!data){
             console.log('no data 1');
         }
     }
+    
     @track columns;
+    @wire(getColumRecords)
+    wiredRecords({error, data}){
+        if(data){
+            console.log('column records: ',data);
+            this.columns = data;
+        }
+        else if(!data){
+            console.log('no data 3');
+            this.columns = undefined;
+        }
+        else if(error){
+            console.log('error 3: ', error);
+        }
+    }
+    @track recordUrl;
+    get recordUrl(){
+        return 'lightning/r/'
+    }
 
     @wire(getObjectInfo, {objectApiName: BOARD_OBEJCT})
     objInfo({error, data}){
@@ -52,19 +73,6 @@ export default class Csc extends LightningElement {
         }
         else if(error){
             console.log('error 2: ', error);
-        }
-    }
-
-    @wire(getColumRecords)
-    wiredRecords({error, data}){
-        if(data){
-            console.log('column records: ',data);
-        }
-        else if(!data){
-            console.log('no data 3');
-        }
-        else if(error){
-            console.log('error 3: ', error);
         }
     }
 }
