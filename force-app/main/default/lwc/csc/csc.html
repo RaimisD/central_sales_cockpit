@@ -2,44 +2,55 @@
     <div class="main">
         <lightning-tabset variant="vertical">
             <template for:each={boards} for:item="board" for:index="index">
-                <lightning-tab label={board.Name} key={board.Id}>
-                    <div class="slds-grid slds-box slds-theme_shade">
-                        <template for:each={board.Board_columns__r} for:item="column" for:index="index">
-                            <div key={column.Id} class="slds-col slds-box slds-size_1-of-12 slds-m-horizontal_xx-small slds-theme_alert-texture">
-                                <lightning-card title={column.Name}>
-                                    <p>{column.Id}</p>
+                <lightning-tab label={board.Name} key={board.Id}  onactive={handleTabSelect} value={board.Id}>
+                    <div class="slds-grid">
+                        <template for:each={columns} for:item="col" for:index="index">
+                            <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small">
+                                <lightning-card title={col.Name} class="slds-m-bottom_small">
+                                    <p>column id: {col.Id}</p>
                                 </lightning-card>
-                                <div class="slds-box slds-theme_shade">
-                                    <template for:each={board.Accounts__r} for:item="Acc" for:index="index">
+                                <div class="slds-m-bottom_small">
+                                    <template for:each={col.Accounts__r} for:item="Acc" for:index="index">
                                         <div key={Acc.Id}>
-                                            <lightning-card title={Acc.Name}>
-                                                <p>{Acc.Board_column__c}</p>
+                                            <lightning-card class="slds-m-bottom_small">
+                                                <div slot="title">
+                                                    <lightning-icon icon-name="standard:account" alternative-text="Account" size="x-small" title="Account"></lightning-icon>
+                                                    <a data-id={Acc.Id} onclick={navigateToRecord}>{Acc.Name}</a>
+                                                </div>
                                             </lightning-card>
                                         </div>
                                     </template>
-                                    <template for:each={board.Contacts__r} for:item="Contact" for:index="index">
+                                    <template for:each={col.Contacts__r} for:item="Contact" for:index="index">
                                         <div key={Contact.Id}>
-                                            <lightning-card title={Contact.Name}>
-                                                <p>{Contact.Board_column__c}</p>
+                                            <lightning-card class="slds-m-bottom_small">
+                                                <div slot="title">
+                                                    <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small" title="contact"></lightning-icon>
+                                                    <a data-id={Contact.Id} onclick={navigateToRecord}>{Contact.Name}</a>
+                                                </div>
                                             </lightning-card>
                                         </div>
                                     </template>
-                                    <template for:each={board.Leads__r} for:item="Lead" for:index="index">
+                                    <template for:each={col.Leads__r} for:item="Lead" for:index="index">
                                         <div key={Lead.Id}>
-                                            <lightning-card title={Lead.Name}>
-                                                <p>{Lead.Board_column__c}</p>
+                                            <lightning-card class="slds-m-bottom_small">
+                                                <div slot="title">
+                                                    <lightning-icon icon-name="standard:lead" alternative-text="Lead" size="x-small" title="Lead"></lightning-icon>
+                                                    <a data-id={Lead.Id} onclick={navigateToRecord}>{Lead.Name}</a>
+                                                </div>
                                             </lightning-card>
                                         </div>
                                     </template>
-                                    <template for:each={board.Opportunities__r} for:item="Opp" for:index="index">
+                                    <template for:each={col.Opportunities__r} for:item="Opp" for:index="index">
                                         <div key={Opp.Id}>
-                                            <lightning-card title={Opp.Name}>
-                                                <p>{Opp.Board_column__c}</p>
+                                            <lightning-card class="slds-m-bottom_small">
+                                                <div slot="title">
+                                                    <lightning-icon icon-name="standard:opportunity" alternative-text="Opportunity" size="x-small" title="Opportunity"></lightning-icon>
+                                                    <a data-id={Opp.Id} onclick={navigateToRecord}>{Opp.Name}</a>
+                                                </div>
                                             </lightning-card>
                                         </div>
                                     </template>
-                                </div>
-                                
+                                </div>  
                             </div>
                         </template>                      
                     </div>
