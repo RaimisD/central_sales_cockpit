@@ -139,7 +139,6 @@
                             <div key={board.Id} class="slds-box slds-m-bottom_small slds-align_absolute-center">
                                 <lightning-card>
                                     <p class="slds-float_left">{board.Name}</p>
-                                    <p>{board.Id}</p>
                                     <lightning-button-icon icon-name="utility:edit" variant="bare" alternative-text="Edit" title="Edit" onclick={handleEdit}></lightning-button-icon>
                                     <lightning-button-icon icon-name="utility:delete" variant="bare" label="Delete" alternative-text="Delete" title="Delete" data-id={board.Id} onclick={handleDeleteBoard}></lightning-button-icon>
                                 </lightning-card>
