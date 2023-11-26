@@ -1,6 +1,7 @@
 import { api, LightningElement, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { deleteRecord } from 'lightning/uiRecordApi';
 
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
@@ -118,5 +119,28 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     handleCloseSettings(event){
         this.showSettings = false;
+    }
+    @api id;
+    handleDeleteBoard(event){
+        const boardId = event.currentTarget.dataset.id;
+        console.log('boardId: ', boardId);
+        deleteRecord(boardId)
+            .then(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: "Success",
+                        message: "Board deleted",
+                        variant: "success",
+                    })
+                );
+            })
+            .catch((error) => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error deleting board',
+                        variant: 'error',
+                    })
+                );
+            });
     }
 }

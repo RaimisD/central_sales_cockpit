@@ -136,11 +136,12 @@
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
                         <!-- Content of the modal -->
                         <template for:each={boards} for:item="board" for:index="index">
-                            <div key={board.id} class="slds-box slds-m-bottom_small slds-align_absolute-center">
+                            <div key={board.Id} class="slds-box slds-m-bottom_small slds-align_absolute-center">
                                 <lightning-card>
                                     <p class="slds-float_left">{board.Name}</p>
+                                    <p>{board.Id}</p>
                                     <lightning-button-icon icon-name="utility:edit" variant="bare" alternative-text="Edit" title="Edit" onclick={handleEdit}></lightning-button-icon>
-                                    <lightning-button-icon icon-name="utility:delete" variant="bare" alternative-text="Delete" title="Delete" onclick={handleDelete}></lightning-button-icon>
+                                    <lightning-button-icon icon-name="utility:delete" variant="bare" label="Delete" alternative-text="Delete" title="Delete" data-id={board.Id} onclick={handleDeleteBoard}></lightning-button-icon>
                                 </lightning-card>
                             </div>
                         </template>
