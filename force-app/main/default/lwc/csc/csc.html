@@ -2,9 +2,9 @@
     <div class="main slds-box">
         <div class="page-section page-header">
             <div class="slds-float_left slds-text-title_bold slds-text-heading_large">Central sales cockpit</div> 
-            <lightning-button-icon class="slds-m-left_large" icon-name="utility:settings" variant="bare" alternative-text="Settings" title="Settings"></lightning-button-icon>
+            <lightning-button-icon class="slds-m-left_large" icon-name="utility:settings" variant="bare" alternative-text="Settings" title="Settings" onclick={handleOpenSettings}></lightning-button-icon>
         </div>
-        <lightning-button label="Add board" title="Add board" onclick={handleAddBoard} class="slds-m-left_x-small"></lightning-button>
+        <!-- <lightning-button label="Add board" title="Add board" onclick={handleAddBoard} class="slds-m-left_x-small"></lightning-button> -->
         <lightning-tabset variant="vertical">
             <template for:each={boards} for:item="board" for:index="index">
                 <lightning-tab label={board.Name} key={board.Id}  onactive={handleTabSelect} value={board.Id}>
@@ -79,7 +79,7 @@
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                         <!-- Content of the modal -->
                         <lightning-record-edit-form object-api-name="Board__c" onsuccess={handleCreateBoardSuccess} onsubmit={handleCreateBoardSubmit}>
-                            <lightning-input-field field-name="Name"></lightning-input-field>
+                            <lightning-input-field field-name="Name" required></lightning-input-field>
                             <lightning-button class="slds-m-top_small" type="submit" label="Create Board"></lightning-button>
                         </lightning-record-edit-form>
                     </div>
@@ -107,7 +107,7 @@
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
                         <!-- Content of the modal -->
                         <lightning-record-edit-form object-api-name="Board_column__c" onsuccess={handleAddColumnSuccess} onsubmit={handleAddColumnSubmit}>
-                            <lightning-input-field field-name="Name"></lightning-input-field>
+                            <lightning-input-field field-name="Name" required></lightning-input-field>
                             <lightning-input-field field-name="Board__c"></lightning-input-field>
                             <lightning-button class="slds-m-top_small" type="submit" label="Add column"></lightning-button>
                         </lightning-record-edit-form>
@@ -121,5 +121,38 @@
             <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
         </template>
 
+        <!-- board setting modal -->
+        <template if:true={showSettings}>
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+                <!-- Modal header and close button -->
+                <div class="slds-modal__container">
+                    <div class="slds-modal__header">
+                        <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate">Board settings</h1>
+                        <!-- button to close the modal -->
+                        <button class="slds-button slds-button_icon-inverse slds-modal__close" title="Close" onclick={handleCloseSettings}>
+                            <lightning-icon icon-name="utility:close" alternative-text="Close"></lightning-icon>
+                        </button>
+                    </div>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+                        <!-- Content of the modal -->
+                        <template for:each={boards} for:item="board" for:index="index">
+                            <div key={board.id} class="slds-box slds-m-bottom_small slds-align_absolute-center">
+                                <lightning-card>
+                                    <p class="slds-float_left">{board.Name}</p>
+                                    <lightning-button-icon icon-name="utility:edit" variant="bare" alternative-text="Edit" title="Edit" onclick={handleEdit}></lightning-button-icon>
+                                    <lightning-button-icon icon-name="utility:delete" variant="bare" alternative-text="Delete" title="Delete" onclick={handleDelete}></lightning-button-icon>
+                                </lightning-card>
+                            </div>
+                        </template>
+                        <lightning-button label="Add board" title="Add board" onclick={handleAddBoard} class="slds-m-left_x-small slds-align_absolute-center"></lightning-button>
+                    </div>
+                    <div class="slds-modal__footer">
+                        <!-- button to close the modal -->
+                        <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={handleCloseSettings}>Cancel</button>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
     </div>
 </template>

@@ -64,16 +64,19 @@ export default class Csc extends NavigationMixin(LightningElement) {
     @track addBoardOpen = false;
 
     handleAddBoard(event){
+        this.showSettings = false;
         this.addBoardOpen = true;
         console.log("Board open? ", this.addBoardOpen);
     }
     handleCloseAddBoard(event){
         this.addBoardOpen = false;
+        this.showSettings = true;
         console.log("Board open? ", this.addBoardOpen);
 
     }
     handleCreateBoardSuccess(event){
         this.addBoardOpen = false;
+        this.showSettings = false;
         const toastEvent = new ShowToastEvent({
             title: 'Success',
             message: 'Board created successfully',
@@ -106,5 +109,14 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     handleAddColumnSubmit(event){
 
+    }
+
+    //board settings
+    @track showSettings = false;
+    handleOpenSettings(event){
+        this.showSettings = true;
+    }
+    handleCloseSettings(event){
+        this.showSettings = false;
     }
 }
