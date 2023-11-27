@@ -119,6 +119,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     handleCloseSettings(event){
         this.showSettings = false;
+        this.editRecordId = undefined;
+        console.log('closed value: ', this.editRecordId);
     }
     @api id;
     handleDeleteBoard(event){
@@ -143,4 +145,10 @@ export default class Csc extends NavigationMixin(LightningElement) {
                 );
             });
     }
+    @track editRecordId;
+    handleEdit(event){
+        const editRecordId = event.currentTarget.dataset.id;
+        console.log('record to edit: ', editRecordId);
+    }
+
 }
