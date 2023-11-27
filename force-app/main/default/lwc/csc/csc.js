@@ -60,7 +60,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
                 console.error(error);
             });
     }
-
     //add new board
     @track addBoardOpen = false;
 
@@ -77,7 +76,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     handleCreateBoardSuccess(event){
         this.addBoardOpen = false;
-        this.showSettings = false;
+        this.showSettings = true;
         const toastEvent = new ShowToastEvent({
             title: 'Success',
             message: 'Board created successfully',
@@ -86,9 +85,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
         this.dispatchEvent(toastEvent);
     }
     handleCreateBoardSubmit(event){
-        
-    }
 
+    }
     //add new column
     @track addColumn = false;
     handleAddColumn(event){
@@ -145,10 +143,27 @@ export default class Csc extends NavigationMixin(LightningElement) {
                 );
             });
     }
-    @track editRecordId;
-    handleEdit(event){
-        const editRecordId = event.currentTarget.dataset.id;
-        console.log('record to edit: ', editRecordId);
+    @track recordIdToEdit;
+    @track openEditor = false;
+    handleEditButton(event){
+        this.recordIdToEdit = event.currentTarget.dataset.id;
+        this.openEditor = true;
+        console.log('record to edit: ', this.recordIdToEdit);
     }
+    handleCancelRename(event){
+        this.openEditor = false;
+        this.recordIdToEdit = undefined;
+    }
+    handleEditSuccess(event){
+        this.openEditor = false;
+        const toastEvent = new ShowToastEvent({
+            title: 'Success',
+            message: 'Name changed successfully',
+            variant: 'success'
+        });
+        this.dispatchEvent(toastEvent);
+    }
+    handleEditSubmit(event){
 
+    }
 }
