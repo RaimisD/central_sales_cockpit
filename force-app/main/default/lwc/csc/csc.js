@@ -2,6 +2,7 @@ import { api, LightningElement, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { deleteRecord } from 'lightning/uiRecordApi';
+import { refreshApex } from "@salesforce/apex";
 
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
@@ -26,41 +27,36 @@ export default class Csc extends NavigationMixin(LightningElement) {
         });
     }
 
+        /* ---------BOARD TABS---------- */
+
     @track selectedTab;
     handleTabSelect(event){ //checks which column is selected to pass value
         this.selectedTab = event.target.value;
-        this.loadColumnRecords();
+        //this.loadColumnRecords();
         console.log('selected tab: ', event.target.value);
     }
     @api boards;
     @track boards;
-    @wire(getBoardRecords) //loads boards
-    wiredBoards({error, data}){
-        if(data){
-            console.log('board data: ',data)
-            this.boards = data;
+    wiredBoardsResult;
+    /* -----LOAD BOARDS----- */
+    @wire(getBoardRecords)
+    wiredBoards(result){
+        this.wiredBoardsResult = result;
+        if(result.data){
+            
+            this.boards = result.data;
+            console.log('board data: ',this.boards);
         }
-        else if(error){
-            console.log('error 1: ', error);
+        else if(result.error){
+            console.log('error 1: ', result.error);
             this.boards = undefined;
         }
-        else if(!data){
+        else if(!result.data){
             console.log('no data 1');
         }
     }
-    @api columns;
-    @track columns;
-    loadColumnRecords() { //loads columns and records
-        getColumRecords({ boardId: this.selectedTab })
-            .then(result => {
-                this.columns = result;
-                console.log('column data: ', result);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }
-    //add new board
+
+    /* -----ADD NEW BOARD----- */
     @track addBoardOpen = false;
 
     handleAddBoard(event){
@@ -74,43 +70,33 @@ export default class Csc extends NavigationMixin(LightningElement) {
         console.log("Board open? ", this.addBoardOpen);
 
     }
-    handleCreateBoardSuccess(event){
-        this.addBoardOpen = false;
-        this.showSettings = true;
-        const toastEvent = new ShowToastEvent({
-            title: 'Success',
-            message: 'Board created successfully',
-            variant: 'success'
-        });
-        this.dispatchEvent(toastEvent);
+    async handleCreateBoardSuccess(event){
+        try{
+            this.addBoardOpen = false;
+            this.showSettings = true;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'Board created successfully',
+                    variant: 'success'
+                })
+            );
+            await refreshApex(this.wiredBoardsResult);
+        }
+        catch(error){
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error adding board',
+                    variant: 'error',
+                })
+            );
+        }
     }
     handleCreateBoardSubmit(event){
 
     }
-    //add new column
-    @track addColumn = false;
-    handleAddColumn(event){
-        this.addColumn = true;
-        console.log("column open? ", this.addColumn);
-    }
-    handleCloseAddColumn(event){
-        this.addColumn = false;
-        console.log("column open? ", this.addColumn);
-    }
-    handleAddColumnSuccess(event){
-        this.addColumn = false;
-        const toastEvent = new ShowToastEvent({
-            title: 'Success',
-            message: 'Column added successfully',
-            variant: 'success'
-        });
-        this.dispatchEvent(toastEvent);
-    }
-    handleAddColumnSubmit(event){
 
-    }
-
-    //board settings
+    /* -----BOARD SETTING MODAL----- */
     @track showSettings = false;
     handleOpenSettings(event){
         this.showSettings = true;
@@ -121,28 +107,29 @@ export default class Csc extends NavigationMixin(LightningElement) {
         console.log('closed value: ', this.editRecordId);
     }
     @api id;
-    handleDeleteBoard(event){
+    async handleDeleteBoard(event){
         const boardId = event.currentTarget.dataset.id;
         console.log('boardId: ', boardId);
-        deleteRecord(boardId)
-            .then(() => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: "Success",
-                        message: "Board deleted",
-                        variant: "success",
-                    })
-                );
-            })
-            .catch((error) => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error deleting board',
-                        variant: 'error',
-                    })
-                );
-            });
+        try{
+            await deleteRecord(boardId);
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: "Success",
+                    message: "Board deleted",
+                    variant: "success",
+                })
+            );
+            await refreshApex(this.wiredBoardsResult);
+        }catch(error){
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error deleting board',
+                    variant: 'error',
+                })
+            );
+        }
     }
+    /* -----LOAD RENAME----- */
     @track recordIdToEdit;
     @track openEditor = false;
     handleEditButton(event){
@@ -154,16 +141,90 @@ export default class Csc extends NavigationMixin(LightningElement) {
         this.openEditor = false;
         this.recordIdToEdit = undefined;
     }
-    handleEditSuccess(event){
-        this.openEditor = false;
-        const toastEvent = new ShowToastEvent({
-            title: 'Success',
-            message: 'Name changed successfully',
-            variant: 'success'
-        });
-        this.dispatchEvent(toastEvent);
+    async handleEditSuccess(event){
+        try{
+            this.openEditor = false;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'Name changed successfully',
+                    variant: 'success'
+                })
+            );
+            await refreshApex(this.wiredBoardsResult);
+        }catch(error){
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error renaming board',
+                    variant: 'error',
+                })
+            );
+        }
     }
     handleEditSubmit(event){
 
     }
+    /* ---------COLUMNS---------- */
+    /* -----LOAD COLUMNS AND RECORDS----- */
+    @api columns;
+    @track columns;
+    wiredColumnResult;
+    @wire(getColumRecords, {boardId: '$selectedTab'})
+    wiredColumns(result){
+        this.wiredColumnResult = result;
+        if(result.data){
+            this.columns = result.data;
+            console.log('column data: ', result.data);
+        }
+        else if(result.error){
+            this.columns = undefined;
+            console.log('column error: ', result.error);
+        }
+        else if(!result.data){
+            console.log('no column data!');
+        }
+    }
+    /* -----ADD NEW COLUMN----- */
+    @track addColumn = false;
+    handleAddColumn(event){
+        this.addColumn = true;
+        console.log("column open? ", this.addColumn);
+    }
+    handleCloseAddColumn(event){
+        this.addColumn = false;
+        console.log("column open? ", this.addColumn);
+    }
+    async handleAddColumnSuccess(event){
+        try{
+            this.addColumn = false;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'Column created successfully',
+                    variant: 'success'
+                })
+            );
+            await refreshApex(this.wiredColumnResult);
+        }catch(error){
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error creating column',
+                    variant: 'error',
+                })
+            );
+        }
+    }
+    handleAddColumnSubmit(event){
+
+    }
 }
+    // loadColumnRecords() { //loads columns and records
+    //     getColumRecords({ boardId: this.selectedTab })
+    //         .then(result => {
+    //             this.columns = result;
+    //             console.log('column data: ', result);
+    //         })
+    //         .catch(error => {
+    //             console.error(error);
+    //         });
+    // }
