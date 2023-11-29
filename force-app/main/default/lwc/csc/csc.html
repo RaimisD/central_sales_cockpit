@@ -10,13 +10,13 @@
                 <lightning-tab label={board.Name} key={board.Id}  onactive={handleTabSelect} value={board.Id}>
                     <div class="slds-grid">
                         <template for:each={columns} for:item="col" for:index="index">
-                            <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small">
+                            <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small" ondrop={drop} ondragover={allowDrop} data-id={col.Id}>
                                 <lightning-card title={col.Name} class="slds-m-bottom_small">
                                     <p>column id: {col.Id}</p>
                                 </lightning-card>
                                 <div class="slds-m-bottom_small">
                                     <template for:each={col.Accounts__r} for:item="Acc" for:index="index">
-                                        <div key={Acc.Id}>
+                                        <div key={Acc.Id} draggable="true" ondragstart={dragStart} data-id={Acc.Id}>
                                             <lightning-card class="slds-m-bottom_small">
                                                 <div slot="title">
                                                     <lightning-icon icon-name="standard:account" alternative-text="Account" size="x-small" title="Account"></lightning-icon>
@@ -26,7 +26,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Contacts__r} for:item="Contact" for:index="index">
-                                        <div key={Contact.Id}>
+                                        <div key={Contact.Id} draggable="true" ondragstart={dragStart} data-id={Contact.Id}>
                                             <lightning-card class="slds-m-bottom_small">
                                                 <div slot="title">
                                                     <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small" title="contact"></lightning-icon>
@@ -36,7 +36,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Leads__r} for:item="Lead" for:index="index">
-                                        <div key={Lead.Id}>
+                                        <div key={Lead.Id} draggable="true" ondragstart={dragStart} data-id={Lead.Id}>
                                             <lightning-card class="slds-m-bottom_small">
                                                 <div slot="title">
                                                     <lightning-icon icon-name="standard:lead" alternative-text="Lead" size="x-small" title="Lead"></lightning-icon>
@@ -46,7 +46,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Opportunities__r} for:item="Opp" for:index="index">
-                                        <div key={Opp.Id}>
+                                        <div key={Opp.Id} draggable="true" ondragstart={dragStart} data-id={Opp.Id}>
                                             <lightning-card class="slds-m-bottom_small">
                                                 <div slot="title">
                                                     <lightning-icon icon-name="standard:opportunity" alternative-text="Opportunity" size="x-small" title="Opportunity"></lightning-icon>
@@ -58,7 +58,7 @@
                                 </div>  
                             </div>
                         </template> 
-                        <lightning-button label="+ column" title="Add column" onclick={handleAddColumn} class="slds-m-left_x-small slds-col"></lightning-button>                     
+                        <lightning-button label="+ column" title="Add column" onclick={handleAddColumn} class="slds-m-left_x-small"></lightning-button>                     
                     </div>
                 </lightning-tab>
             </template>

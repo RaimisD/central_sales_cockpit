@@ -6,6 +6,7 @@ import { refreshApex } from "@salesforce/apex";
 
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
+import updateAccountColumn from '@salesforce/apex/boardController.updateAccountColumn';
 export default class Csc extends NavigationMixin(LightningElement) {
     connectedCallback() {
         console.log("Board open? ", this.addBoardOpen);
@@ -217,14 +218,27 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleAddColumnSubmit(event){
 
     }
+
+    /* -----DRAG AND DROP----- */
+    dragStart(event) {
+        event.dataTransfer.setData("text", event.target.dataset.id);
+    }
+    allowDrop(event) {
+        event.preventDefault();
+    }
+    drop(event) {
+        event.preventDefault();
+        var recordId = event.dataTransfer.getData("text");
+        var columnId = event.target.dataset.id;
+        this.updateAccountColumn(recordId, columnId);
+    }
+    updateAccountColumn(recordId, columnId) {
+        updateAccountColumn({ recordId: recordId, newColumnId: columnId })
+        .then(result => {
+            // Handle success - e.g., refresh the list
+        })
+        .catch(error => {
+            // Handle error
+        });
+    }
 }
-    // loadColumnRecords() { //loads columns and records
-    //     getColumRecords({ boardId: this.selectedTab })
-    //         .then(result => {
-    //             this.columns = result;
-    //             console.log('column data: ', result);
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //         });
-    // }
