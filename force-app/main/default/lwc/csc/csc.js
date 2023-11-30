@@ -222,15 +222,18 @@ export default class Csc extends NavigationMixin(LightningElement) {
     /* -----DRAG AND DROP----- */
     dragStart(event) {
         event.dataTransfer.setData("text", event.target.dataset.id);
+        console.log('drag start')
     }
     allowDrop(event) {
         event.preventDefault();
+
     }
     drop(event) {
         event.preventDefault();
         var recordId = event.dataTransfer.getData("text");
         var columnId = event.target.dataset.id;
         this.updateAccountColumn(recordId, columnId);
+        console.log('should be dropped');
     }
     updateAccountColumn(recordId, columnId) {
         updateAccountColumn({ recordId: recordId, newColumnId: columnId })
