@@ -1,12 +1,12 @@
 import { api, LightningElement, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { deleteRecord } from 'lightning/uiRecordApi';
+import { deleteRecord, getRecord } from 'lightning/uiRecordApi';
 import { refreshApex } from "@salesforce/apex";
 
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
-import updateAccountColumn from '@salesforce/apex/boardController.updateAccountColumn';
+import updateColumn from '@salesforce/apex/boardController.updateColumn';
 export default class Csc extends NavigationMixin(LightningElement) {
     connectedCallback() {
         console.log("Board open? ", this.addBoardOpen);
@@ -228,17 +228,55 @@ export default class Csc extends NavigationMixin(LightningElement) {
         event.preventDefault();
 
     }
+    @track recId;
+    @track colId;
+    @track selectedId;
     drop(event) {
         event.preventDefault();
         var recordId = event.dataTransfer.getData("text");
+        this.recId = recordId;
         var columnId = event.target.dataset.id;
-        this.updateAccountColumn(recordId, columnId);
-        console.log('should be dropped');
+        this.colId = columnId;
+
+        console.log('fire 1');
+        console.log('should be dropped on: ', columnId, ' record id: ', recordId);
     }
-    updateAccountColumn(recordId, columnId) {
-        updateAccountColumn({ recordId: recordId, newColumnId: columnId })
+    @track objName;
+    @wire(getRecord, {recordId: '$recId', layoutTypes: 'Full'})
+    getRecData({error, data}){
+        if(data){
+            console.log('api name: ',data.apiName);
+            console.log('rec data: ', data);
+            console.log('col id: ', data.fields.Board__c.value);
+            this.objName = data.apiName;
+            this.updateColumn(this.recId, this.colId, this.objName);
+            console.log('fire 2');
+        }
+        else if(!data){
+            console.log('no data!');
+        }
+        else if(error){
+            console.log(error);
+        }
+    }
+
+    updateColumn(recordId, columnId, objName) {
+        updateColumn({ recordId: recordId, newColumnId: columnId,  recType: objName})
         .then(result => {
-            // Handle success - e.g., refresh the list
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'Column changed successfully',
+                    variant: 'success'
+                })
+            );
+            refreshApex(this.wiredColumnResult);
+            this.objName = undefined;
+            this.recId = undefined;
+            this.colId = undefined;
+            console.log('api 2: ', this.objName);
+            console.log('rec 2: ', this.recId);
+            console.log('col 2: ', this.colId);
         })
         .catch(error => {
             // Handle error
