@@ -282,4 +282,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
             // Handle error
         });
     }
+    disallowDrop(event) {
+        // By not calling event.preventDefault(), you effectively disallow dropping here
+    }
 }
