@@ -15,43 +15,50 @@
                                     </lightning-card>
                                 <div class="slds-m-bottom_large">
                                     <template for:each={col.Accounts__r} for:item="Acc" for:index="index" >
-                                        <div key={Acc.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Acc.Id} class="slds-m-bottom_small slds-truncate">
+                                        <div key={Acc.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Acc.Id} class="slds-m-bottom_small">
                                             <lightning-card>
-                                                <div slot="title">
+                                                <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:account" alternative-text="Account" size="x-small" title="Account"></lightning-icon>
-                                                    <a data-id={Acc.Id} onclick={navigateToRecord}>{Acc.Name}</a>
+                                                    <a data-id={Acc.Id} onclick={navigateToRecord} >{Acc.Name}</a>
                                                 </div>
+                                                <p>{index}</p>
+                                                <p>{Acc.Id}</p>
                                             </lightning-card>
                                         </div>
                                     </template>
                                     <template for:each={col.Contacts__r} for:item="Contact" for:index="index">
-                                        <div key={Contact.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Contact.Id} class="slds-m-bottom_small slds-truncate">
+                                        <div key={Contact.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Contact.Id} class="slds-m-bottom_small">
                                             <lightning-card>
-                                                <div slot="title">
+                                                <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small" title="contact"></lightning-icon>
-                                                    <a data-id={Contact.Id} onclick={navigateToRecord}>{Contact.Name}</a>
+                                                    <a data-id={Contact.Id} onclick={navigateToRecord} >{Contact.Name}</a>
                                                 </div>
+                                                <p>{index}</p>
+                                                <p>{Contact.Id}</p>
                                             </lightning-card>
                                         </div>
                                     </template>
                                     <template for:each={col.Leads__r} for:item="Lead" for:index="index">
-                                        <div key={Lead.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Lead.Id} class="slds-m-bottom_small slds-truncate">
+                                        <div key={Lead.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Lead.Id} class="slds-m-bottom_small">
                                             <lightning-card>
-                                                <div slot="title">
+                                                <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:lead" alternative-text="Lead" size="x-small" title="Lead"></lightning-icon>
                                                     <a data-id={Lead.Id} onclick={navigateToRecord}>{Lead.Name}</a>
                                                 </div>
+                                                <p>{index}</p>
+                                                <p>{Lead.Id}</p>
                                             </lightning-card>
                                         </div>
                                     </template>
                                     <template for:each={col.Opportunities__r} for:item="Opp" for:index="index">
-                                        <div key={Opp.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Opp.Id} class="slds-m-bottom_small slds-truncate">
+                                        <div key={Opp.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Opp.Id} class="slds-m-bottom_small">
                                             <lightning-card>
-                                                <div slot="title">
+                                                <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:opportunity" alternative-text="Opportunity" size="x-small" title="Opportunity"></lightning-icon>
                                                     <a data-id={Opp.Id} onclick={navigateToRecord}>{Opp.Name}</a>
                                                 </div>
-                                                <!-- <div slot="footer"><p>{Opp.expectedRevenue}</p></div> -->
+                                                <p>{index}</p>
+                                                <p>{Opp.Id}</p>
                                                 <p class="slds-m-left_large">€ {Opp.Amount}</p>
                                             </lightning-card>
                                         </div>

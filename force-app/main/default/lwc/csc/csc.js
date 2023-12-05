@@ -226,7 +226,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     allowDrop(event) {
         event.preventDefault();
-
     }
     @track recId;
     @track colId;
