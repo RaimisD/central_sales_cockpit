@@ -11,7 +11,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
     connectedCallback() {
         console.log("Board open? ", this.addBoardOpen);
         console.log("Column open? ", this.addColumn);
-
     }
 
     navigateToRecord(event) {  //generates link to record
