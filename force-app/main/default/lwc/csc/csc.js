@@ -208,21 +208,27 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     /* -----DRAG AND DROP----- */
     dragStart(event) {
+        event.dataTransfer.dropEffect = 'move';
         event.dataTransfer.setData("text", event.target.dataset.id);
         console.log('drag start')
     }
     allowDrop(event) {
         event.preventDefault();
+        return false;
     }
     @track recId;
     @track colId;
     @track selectedId;
     drop(event) {
         event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
         var recordId = event.dataTransfer.getData("text");
         this.recId = recordId;
         var columnId = event.target.dataset.id;
         this.colId = columnId;
+        console.log('dragged item: ', this.recId);
+        console.log('moving on: ', this.colId);
+
         console.log('fire 1');
         console.log('should be dropped on: ', columnId, ' record id: ', recordId);
     }
@@ -232,7 +238,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
         if(data){
             console.log('api name: ',data.apiName);
             console.log('rec data: ', data);
-            console.log('col id: ', data.fields.Board__c.value);
+            console.log('board Id id: ', data.fields.Board__c.value);
             this.objName = data.apiName;
             this.updateColumn(this.recId, this.colId, this.objName);
             console.log('fire 2');
@@ -266,7 +272,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
             // Handle error
         });
     }
-    disallowDrop(event) {
+    dragOver(event) {
+        return false;
         // By not calling event.preventDefault(), you effectively disallow dropping here
     }
 }

@@ -10,12 +10,12 @@
                     <div class="slds-grid">
                         <template for:each={columns} for:item="col" for:index="index">
                             <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small" ondrop={drop} ondragover={allowDrop} data-id={col.Id}>
-                                    <lightning-card title={col.Name} class="slds-m-bottom_small" ondragover={disallowDrop}>
+                                    <lightning-card title={col.Name} class="slds-m-bottom_small" ondragover={dragOver}>
                                         <p>{totalAmount}</p>
                                     </lightning-card>
                                 <div class="slds-m-bottom_large">
                                     <template for:each={col.Accounts__r} for:item="Acc" for:index="index" >
-                                        <div key={Acc.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Acc.Id} class="slds-m-bottom_small">
+                                        <div key={Acc.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Acc.Id} class="slds-m-bottom_small">
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:account" alternative-text="Account" size="x-small" title="Account"></lightning-icon>
@@ -27,7 +27,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Contacts__r} for:item="Contact" for:index="index">
-                                        <div key={Contact.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Contact.Id} class="slds-m-bottom_small">
+                                        <div key={Contact.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Contact.Id} class="slds-m-bottom_small">
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small" title="contact"></lightning-icon>
@@ -39,7 +39,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Leads__r} for:item="Lead" for:index="index">
-                                        <div key={Lead.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Lead.Id} class="slds-m-bottom_small">
+                                        <div key={Lead.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Lead.Id} class="slds-m-bottom_small">
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:lead" alternative-text="Lead" size="x-small" title="Lead"></lightning-icon>
@@ -51,7 +51,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Opportunities__r} for:item="Opp" for:index="index">
-                                        <div key={Opp.Id} draggable="true" ondragstart={dragStart} ondragover={disallowDrop} data-id={Opp.Id} class="slds-m-bottom_small">
+                                        <div key={Opp.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Opp.Id} class="slds-m-bottom_small">
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:opportunity" alternative-text="Opportunity" size="x-small" title="Opportunity"></lightning-icon>
@@ -65,8 +65,8 @@
                                     </template>
                                 </div>
                             </div>
-                        </template> 
-                        <lightning-button label="+ column" title="Add column" onclick={handleAddColumn} class="slds-m-left_x-small"></lightning-button>                     
+                        </template>
+                        <lightning-button label="+ column" title="Add column" onclick={handleAddColumn} class="slds-m-left_x-small"></lightning-button>
                     </div>
                 </lightning-tab>
             </template>
