@@ -3,7 +3,6 @@ import { NavigationMixin } from 'lightning/navigation'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { deleteRecord, getRecord } from 'lightning/uiRecordApi';
 import { refreshApex } from "@salesforce/apex";
-
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
 import updateColumn from '@salesforce/apex/boardController.updateColumn';
@@ -12,7 +11,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         console.log("Board open? ", this.addBoardOpen);
         console.log("Column open? ", this.addColumn);
     }
-
     navigateToRecord(event) {  //generates link to record
         event.stopPropagation();
         const recordId = event.currentTarget.dataset.id;
@@ -26,9 +24,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
             window.open(url);
         });
     }
-
         /* ---------BOARD TABS---------- */
-
     @track selectedTab;
     handleTabSelect(event){ //checks which column is selected to pass value
         this.selectedTab = event.target.value;
@@ -55,10 +51,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
             console.log('no data 1');
         }
     }
-
     /* -----ADD NEW BOARD----- */
     @track addBoardOpen = false;
-
     handleAddBoard(event){
         this.showSettings = false;
         this.addBoardOpen = true;
@@ -68,7 +62,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         this.addBoardOpen = false;
         this.showSettings = true;
         console.log("Board open? ", this.addBoardOpen);
-
     }
     async handleCreateBoardSuccess(event){
         try{
@@ -93,9 +86,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
     }
     handleCreateBoardSubmit(event){
-
     }
-
     /* -----BOARD SETTING MODAL----- */
     @track showSettings = false;
     handleOpenSettings(event){
@@ -162,7 +153,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
     }
     handleEditSubmit(event){
-
     }
     /* ---------COLUMNS---------- */
     /* -----LOAD COLUMNS AND RECORDS----- */
@@ -215,9 +205,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
     }
     handleAddColumnSubmit(event){
-
     }
-
     /* -----DRAG AND DROP----- */
     dragStart(event) {
         event.dataTransfer.setData("text", event.target.dataset.id);
@@ -235,7 +223,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         this.recId = recordId;
         var columnId = event.target.dataset.id;
         this.colId = columnId;
-
         console.log('fire 1');
         console.log('should be dropped on: ', columnId, ' record id: ', recordId);
     }
@@ -257,7 +244,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
             console.log(error);
         }
     }
-
     updateColumn(recordId, columnId, objName) {
         updateColumn({ recordId: recordId, newColumnId: columnId,  recType: objName})
         .then(result => {
