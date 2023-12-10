@@ -7,6 +7,7 @@ public with sharing class boardController {
     public static list<Board_column__c> getColumRecords(string boardId) {
         return [SELECT Id, Name, (SELECT Id, Name, Board_column__c FROM Accounts__r), (SELECT Id, Name, Board_column__c FROM Contacts__r), (SELECT Id, Name, Board_column__c FROM Leads__r), (SELECT Id, Name, Amount, Board_column__c FROM Opportunities__r) FROM Board_column__c WHERE Board__c = :boardId];
     }
+    
     @AuraEnabled
     public static void updateColumn(String recordId, String newColumnId, String recType) {
         System.debug('Values received, recordId: ' + recordId + ', newColumnId: ' + newColumnId + ', sObjType: ' + recType);
