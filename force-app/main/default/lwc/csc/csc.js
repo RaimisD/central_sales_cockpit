@@ -1,11 +1,19 @@
 import { api, LightningElement, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { deleteRecord, getRecord } from 'lightning/uiRecordApi';
+import { deleteRecord, getRecord, getRecords } from 'lightning/uiRecordApi';
 import { refreshApex } from "@salesforce/apex";
+import { getRelatedListRecordsBatch, getRelatedListInfo, getRelatedListInfoBatch,  getRelatedListRecords} from 'lightning/uiRelatedListApi';
+
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
 import updateColumn from '@salesforce/apex/boardController.updateColumn';
+import ACCOUNT_NAME_FIELD from "@salesforce/schema/Account.Name";
+import LEAD_NAME_FIELD from "@salesforce/schema/Lead.Name";
+import OPPORTUNITY_NAME_FIELD from "@salesforce/schema/Opportunity.Name";
+import CONTACT_NAME_FIELD from "@salesforce/schema/Contact.Name";
+
+
 export default class Csc extends NavigationMixin(LightningElement) {
     connectedCallback() {
         console.log("Board open? ", this.addBoardOpen);
@@ -39,7 +47,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
     wiredBoards(result){
         this.wiredBoardsResult = result;
         if(result.data){
-            
             this.boards = result.data;
             console.log('board data: ',this.boards);
         }
@@ -158,13 +165,15 @@ export default class Csc extends NavigationMixin(LightningElement) {
     /* -----LOAD COLUMNS AND RECORDS----- */
     @api columns;
     @track columns;
+    //@track ids;
     wiredColumnResult;
     @wire(getColumRecords, {boardId: '$selectedTab'})
     wiredColumns(result){
         this.wiredColumnResult = result;
         if(result.data){
             this.columns = result.data;
-            console.log('column data: ', result.data);
+            console.log('column data: ', result.data);   
+            //this.combineAndSortItems();
         }
         else if(result.error){
             this.columns = undefined;
@@ -174,6 +183,50 @@ export default class Csc extends NavigationMixin(LightningElement) {
             console.log('no column data!');
         }
     }
+
+    // combineAndSortItems() {
+    //     let combinedList = [];
+    //     this.columns.forEach(column => {
+    //         console.log('Processing column:', column);
+    //         if(column.Accounts__r){
+    //             column.Accounts__r.forEach(acc => {
+    //                 console.log(acc);
+    //                 combinedList.push({ ...acc, type: 'Account' });
+    //                 console.log('fired here 1');
+    //             });
+    //         }
+    //         if(column.Contacts__r){
+    //             column.Contacts__r.forEach(contact => {
+    //                 console.log(contact);
+    //                 combinedList.push({ ...contact, type: 'Contact' });
+    //                 console.log('fired here 2');
+    //             });
+    //         }
+
+    //         if(column.Leads__r){
+    //             column.Leads__r.forEach(lead => {
+    //                 console.log(lead);
+    //                 combinedList.push({ ...lead, type: 'Lead' });
+    //                 console.log('fired here 3');
+    //             });
+    //         }
+
+    //         if(column.Opportunities__r){
+    //             column.Opportunities__r.forEach(opportunity => {
+    //                 console.log(opportunity);
+    //                 combinedList.push({ ...opportunity, type: 'Opportunity' });
+    //                 console.log('fired here 4');
+    //             });
+    //         }
+    //     });
+    //     console.log('Before sorting: ', combinedList);
+    //     combinedList.sort((a, b) => a.Order__c - b.Order__c);
+    //     console.log('After sorting: ', combinedList);
+
+    //     this.combinedItems = combinedList;
+    //     console.log('combined: ',this.combinedItems);
+
+    // }
     /* -----ADD NEW COLUMN----- */
     @track addColumn = false;
     handleAddColumn(event){
@@ -275,5 +328,40 @@ export default class Csc extends NavigationMixin(LightningElement) {
     dragOver(event) {
         return false;
         // By not calling event.preventDefault(), you effectively disallow dropping here
+    }
+
+    @wire(getRelatedListRecordsBatch, {
+        parentRecordId: 'a010600002V2FQGAA3',
+        relatedListParameters: [
+            {
+              relatedListId: 'Contacts__r',
+
+            },
+            {
+              relatedListId: 'Opportunities__r',
+
+            },
+            {
+            relatedListId: 'Accounts__r',
+
+            },
+            {
+            relatedListId: 'Leads__r',
+
+            }
+          ]
+    })
+    getBatchData({error, data}){
+        if(data){
+            this.batchData = data;
+            console.log('test batch: ', this.batchData);
+            console.log('Batch id: ', data.results);
+        }
+        else if(!data){
+            console.log('no test batch data!');
+        }
+        else if(error){
+            console.log(error);
+        }
     }
 }
