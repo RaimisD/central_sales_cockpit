@@ -184,49 +184,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
     }
 
-    // combineAndSortItems() {
-    //     let combinedList = [];
-    //     this.columns.forEach(column => {
-    //         console.log('Processing column:', column);
-    //         if(column.Accounts__r){
-    //             column.Accounts__r.forEach(acc => {
-    //                 console.log(acc);
-    //                 combinedList.push({ ...acc, type: 'Account' });
-    //                 console.log('fired here 1');
-    //             });
-    //         }
-    //         if(column.Contacts__r){
-    //             column.Contacts__r.forEach(contact => {
-    //                 console.log(contact);
-    //                 combinedList.push({ ...contact, type: 'Contact' });
-    //                 console.log('fired here 2');
-    //             });
-    //         }
-
-    //         if(column.Leads__r){
-    //             column.Leads__r.forEach(lead => {
-    //                 console.log(lead);
-    //                 combinedList.push({ ...lead, type: 'Lead' });
-    //                 console.log('fired here 3');
-    //             });
-    //         }
-
-    //         if(column.Opportunities__r){
-    //             column.Opportunities__r.forEach(opportunity => {
-    //                 console.log(opportunity);
-    //                 combinedList.push({ ...opportunity, type: 'Opportunity' });
-    //                 console.log('fired here 4');
-    //             });
-    //         }
-    //     });
-    //     console.log('Before sorting: ', combinedList);
-    //     combinedList.sort((a, b) => a.Order__c - b.Order__c);
-    //     console.log('After sorting: ', combinedList);
-
-    //     this.combinedItems = combinedList;
-    //     console.log('combined: ',this.combinedItems);
-
-    // }
     /* -----ADD NEW COLUMN----- */
     @track addColumn = false;
     handleAddColumn(event){
@@ -328,6 +285,67 @@ export default class Csc extends NavigationMixin(LightningElement) {
     dragOver(event) {
         return false;
         // By not calling event.preventDefault(), you effectively disallow dropping here
+    }
+    // drag and drop for board
+    @track dragBoardStart;
+    // dragBoardStart(event) {
+    //     this.dragBoardStart = event.target.dataset.id;
+    //     event.target.classList.add("drag");
+    //   }
+    
+    // dragBoardOver(event) {
+    //     event.preventDefault();
+    //     return false;
+    //   }
+    
+    //   dropBoard(event) {
+    //     event.stopPropagation();
+    //     const DragValName = this.dragBoardStart;
+    //     const DropValName = event.target.title;
+    //     if (DragValName === DropValName) {
+    //       return false;
+    //     }
+    //     const index = DropValName;
+    //     const currentIndex = DragValName;
+    //     const newIndex = DropValName;
+    //     Array.prototype.move = function (from, to) {
+    //       this.splice(to, 0, this.splice(from, 1)[0]);
+    //     };
+    //   }
+    dragBoardStart(event) {
+        this.dragBoardStart = event.target.dataset.id;
+        event.dataTransfer.setData('text', event.target.dataset.index); // Set the index as the data to be transferred
+        event.target.classList.add("drag");
+    }
+    
+    dragBoardOver(event) {
+        event.preventDefault();
+    }
+    
+    dropBoard(event) {
+        event.preventDefault();
+        const originIndex = event.dataTransfer.getData('text');
+        const targetIndex = event.target.dataset.index;
+    
+        if (originIndex !== targetIndex) {
+            this.boards.move(originIndex, targetIndex);
+            this.updateBoardOrder(); // Function to update board_order__c field for each board
+        }
+    }
+    
+    updateBoardOrder() {
+        // Assume we have an @wire or @apex method updateBoardOrderMethod that takes a list of boards with their new order
+        this.boards.forEach((board, index) => {
+            board.board_order__c = index;
+        });
+    
+        updateBoardOrderMethod({ boards: this.boards })
+        .then(result => {
+            // Handle success
+        })
+        .catch(error => {
+            // Handle error
+        });
     }
 
     @wire(getRelatedListRecordsBatch, {
