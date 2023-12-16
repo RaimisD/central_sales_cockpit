@@ -4,19 +4,19 @@
             <div class="slds-float_left slds-text-title_bold slds-text-heading_large">Central sales cockpit</div> 
             <lightning-button-icon class="slds-m-left_large" icon-name="utility:settings" variant="bare" alternative-text="Settings" title="Settings" onclick={handleOpenSettings}></lightning-button-icon>
         </div>
-        <lightning-tabset variant="vertical" ondrop={dropBoard}>
+        <lightning-tabset variant="vertical">
             <template for:each={boards} for:item="board" for:index="index">
-                <lightning-tab label={board.Name} key={board.Id} onactive={handleTabSelect} value={board.Id} draggable="true" ondrop={dropBoard} ondragstart={dragBoardStart} ondragover={dragBoardOver} data-id={board.Id} data-index={index}>
+                <lightning-tab label={board.Name} key={board.Id} onactive={handleTabSelect} value={board.Id} data-id={board.Id} data-index={index}>
                     <p>{board.board_order__c}</p>
                     <div class="slds-grid">
                         <template for:each={columns} for:item="col" for:index="index">
-                            <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small" ondrop={drop} ondragover={allowDrop} data-id={col.Id}>
-                                    <lightning-card title={col.Name} class="slds-m-bottom_small" ondragover={dragOver}>
+                            <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small slds-box" ondrop={drop} ondragover={allowDrop} data-id={col.Id}>
+                                    <lightning-card title={col.Name} class="slds-m-bottom_small" ondragover={dragOver2}>
                                         <p>{totalAmount}</p>
                                     </lightning-card>
                                 <div class="slds-m-bottom_large">
                                     <template for:each={col.Accounts__r} for:item="Acc" for:index="index">
-                                        <div key={Acc.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Acc.Id} class="slds-m-bottom_small">
+                                        <div key={Acc.Id}  class="slds-m-bottom_large slds-m-top_large" ondrop={dropOnCard} draggable="true" ondragstart={dragStart} ondragover={dragOver2} data-id={Acc.Id}>
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:account" alternative-text="Account" size="x-small" title="Account"></lightning-icon>
@@ -29,7 +29,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Contacts__r} for:item="Contact" for:index="index">
-                                        <div key={Contact.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Contact.Id} class="slds-m-bottom_small">
+                                        <div key={Contact.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver2} data-id={Contact.Id} ondrop={dropOnCard} class="slds-m-bottom_small slds-m-top_large">
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small" title="contact"></lightning-icon>
@@ -42,7 +42,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Leads__r} for:item="Lead" for:index="index">
-                                        <div key={Lead.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Lead.Id} class="slds-m-bottom_small">
+                                        <div key={Lead.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver2} data-id={Lead.Id} ondrop={dropOnCard} class="slds-m-bottom_small slds-m-top_large">
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:lead" alternative-text="Lead" size="x-small" title="Lead"></lightning-icon>
@@ -55,7 +55,7 @@
                                         </div>
                                     </template>
                                     <template for:each={col.Opportunities__r} for:item="Opp" for:index="index">
-                                        <div key={Opp.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver} data-id={Opp.Id} class="slds-m-bottom_small">
+                                        <div key={Opp.Id} draggable="true" ondragstart={dragStart} ondragover={dragOver2} data-id={Opp.Id} ondrop={dropOnCard} class="slds-m-bottom_small slds-m-top_large">
                                             <lightning-card>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:opportunity" alternative-text="Opportunity" size="x-small" title="Opportunity"></lightning-icon>

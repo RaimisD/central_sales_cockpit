@@ -242,6 +242,11 @@ export default class Csc extends NavigationMixin(LightningElement) {
         console.log('fire 1');
         console.log('should be dropped on: ', columnId, ' record id: ', recordId);
     }
+    dropOnCard(event) {
+        event.stopPropagation(); // Stop the event from propagating to the column
+        // Optionally, you can provide feedback to the user here
+        console.log('Dropping on cards is not allowed.');
+    }
     @track objName;
     @wire(getRecord, {recordId: '$recId', layoutTypes: 'Full'})
     getRecData({error, data}){
@@ -283,70 +288,12 @@ export default class Csc extends NavigationMixin(LightningElement) {
         });
     }
     dragOver(event) {
-        return false;
-        // By not calling event.preventDefault(), you effectively disallow dropping here
+        console.log('should drop here');
     }
-    // drag and drop for board
-    @track dragBoardStart;
-    // dragBoardStart(event) {
-    //     this.dragBoardStart = event.target.dataset.id;
-    //     event.target.classList.add("drag");
-    //   }
-    
-    // dragBoardOver(event) {
-    //     event.preventDefault();
-    //     return false;
-    //   }
-    
-    //   dropBoard(event) {
-    //     event.stopPropagation();
-    //     const DragValName = this.dragBoardStart;
-    //     const DropValName = event.target.title;
-    //     if (DragValName === DropValName) {
-    //       return false;
-    //     }
-    //     const index = DropValName;
-    //     const currentIndex = DragValName;
-    //     const newIndex = DropValName;
-    //     Array.prototype.move = function (from, to) {
-    //       this.splice(to, 0, this.splice(from, 1)[0]);
-    //     };
-    //   }
-    dragBoardStart(event) {
-        this.dragBoardStart = event.target.dataset.id;
-        event.dataTransfer.setData('text', event.target.dataset.index); // Set the index as the data to be transferred
-        event.target.classList.add("drag");
+    dragOver2(event){
+        console.log('should not drop here')
     }
-    
-    dragBoardOver(event) {
-        event.preventDefault();
-    }
-    
-    dropBoard(event) {
-        event.preventDefault();
-        const originIndex = event.dataTransfer.getData('text');
-        const targetIndex = event.target.dataset.index;
-    
-        if (originIndex !== targetIndex) {
-            this.boards.move(originIndex, targetIndex);
-            this.updateBoardOrder(); // Function to update board_order__c field for each board
-        }
-    }
-    
-    updateBoardOrder() {
-        // Assume we have an @wire or @apex method updateBoardOrderMethod that takes a list of boards with their new order
-        this.boards.forEach((board, index) => {
-            board.board_order__c = index;
-        });
-    
-        updateBoardOrderMethod({ boards: this.boards })
-        .then(result => {
-            // Handle success
-        })
-        .catch(error => {
-            // Handle error
-        });
-    }
+
 
     @wire(getRelatedListRecordsBatch, {
         parentRecordId: 'a010600002V2FQGAA3',
