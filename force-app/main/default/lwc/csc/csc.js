@@ -180,7 +180,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
                 //console.log('pushed this column: ',this.columns[i]);
             }
             console.log('ElementList--------> ', this.ElementList);
-            console.log('column data: ', result.data);   
+            console.log('column data: ', result.data);
         }
         else if(result.error){
             this.columns = undefined;
@@ -224,82 +224,82 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleAddColumnSubmit(event){
     }
     /* -----DRAG AND DROP----- */
-    dragStart(event) {
-        event.dataTransfer.dropEffect = 'move';
-        event.dataTransfer.setData("text", event.target.dataset.id);
-        console.log('drag start')
-    }
-    allowDrop(event) {
-        event.preventDefault();
-        return false;
-    }
-    @track recId;
-    @track colId;
-    @track selectedId;
-    drop(event) {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-        var recordId = event.dataTransfer.getData("text");
-        this.recId = recordId;
-        var columnId = event.target.dataset.id;
-        this.colId = columnId;
-        console.log('dragged item: ', this.recId);
-        console.log('moving on: ', this.colId);
+    // dragStart(event) {
+    //     event.dataTransfer.dropEffect = 'move';
+    //     event.dataTransfer.setData("text", event.target.dataset.id);
+    //     console.log('drag start')
+    // }
+    // allowDrop(event) {
+    //     event.preventDefault();
+    //     return false;
+    // }
+    // @track recId;
+    // @track colId;
+    // @track selectedId;
+    // drop(event) {
+    //     event.preventDefault();
+    //     event.dataTransfer.dropEffect = 'move';
+    //     var recordId = event.dataTransfer.getData("text");
+    //     this.recId = recordId;
+    //     var columnId = event.target.dataset.id;
+    //     this.colId = columnId;
+    //     console.log('dragged item: ', this.recId);
+    //     console.log('moving on: ', this.colId);
 
-        console.log('fire 1');
-        console.log('should be dropped on: ', columnId, ' record id: ', recordId);
-    }
-    dropOnCard(event) {
-        event.stopPropagation(); // Stop the event from propagating to the column
-        // Optionally, you can provide feedback to the user here
-        console.log('Dropping on cards is not allowed.');
-    }
-    @track objName;
-    @wire(getRecord, {recordId: '$recId', layoutTypes: 'Full'})
-    getRecData({error, data}){
-        if(data){
-            console.log('api name: ',data.apiName);
-            console.log('rec data: ', data);
-            console.log('board Id id: ', data.fields.Board__c.value);
-            this.objName = data.apiName;
-            this.updateColumn(this.recId, this.colId, this.objName);
-            console.log('fire 2');
-        }
-        else if(!data){
-            console.log('no data!');
-        }
-        else if(error){
-            console.log(error);
-        }
-    }
-    updateColumn(recordId, columnId, objName) {
-        updateColumn({ recordId: recordId, newColumnId: columnId,  recType: objName})
-        .then(result => {
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: 'Success',
-                    message: 'Column changed successfully',
-                    variant: 'success'
-                })
-            );
-            refreshApex(this.wiredColumnResult);
-            this.objName = undefined;
-            this.recId = undefined;
-            this.colId = undefined;
-            console.log('api 2: ', this.objName);
-            console.log('rec 2: ', this.recId);
-            console.log('col 2: ', this.colId);
-        })
-        .catch(error => {
-            // Handle error
-        });
-    }
-    dragOver(event) {
-        console.log('should drop here');
-    }
-    dragOver2(event){
-        console.log('should not drop here')
-    }
+    //     console.log('fire 1');
+    //     console.log('should be dropped on: ', columnId, ' record id: ', recordId);
+    // }
+    // dropOnCard(event) {
+    //     event.stopPropagation(); // Stop the event from propagating to the column
+    //     // Optionally, you can provide feedback to the user here
+    //     console.log('Dropping on cards is not allowed.');
+    // }
+    // @track objName;
+    // @wire(getRecord, {recordId: '$recId', layoutTypes: 'Full'})
+    // getRecData({error, data}){
+    //     if(data){
+    //         console.log('api name: ',data.apiName);
+    //         console.log('rec data: ', data);
+    //         console.log('board Id id: ', data.fields.Board__c.value);
+    //         this.objName = data.apiName;
+    //         this.updateColumn(this.recId, this.colId, this.objName);
+    //         console.log('fire 2');
+    //     }
+    //     else if(!data){
+    //         console.log('no data!');
+    //     }
+    //     else if(error){
+    //         console.log(error);
+    //     }
+    // }
+    // updateColumn(recordId, columnId, objName) {
+    //     updateColumn({ recordId: recordId, newColumnId: columnId,  recType: objName})
+    //     .then(result => {
+    //         this.dispatchEvent(
+    //             new ShowToastEvent({
+    //                 title: 'Success',
+    //                 message: 'Column changed successfully',
+    //                 variant: 'success'
+    //             })
+    //         );
+    //         refreshApex(this.wiredColumnResult);
+    //         this.objName = undefined;
+    //         this.recId = undefined;
+    //         this.colId = undefined;
+    //         console.log('api 2: ', this.objName);
+    //         console.log('rec 2: ', this.recId);
+    //         console.log('col 2: ', this.colId);
+    //     })
+    //     .catch(error => {
+    //         // Handle error
+    //     });
+    // }
+    // dragOver(event) {
+    //     console.log('should drop here');
+    // }
+    // dragOver2(event){
+    //     console.log('should not drop here')
+    // }
 
 
     @wire(getRelatedListRecordsBatch, {
@@ -335,55 +335,5 @@ export default class Csc extends NavigationMixin(LightningElement) {
         else if(error){
             console.log(error);
         }
-    }
-    // column drag and drop
-    @track dragColStart;
-    DragColStart(event) {
-        this.dragColStart = parseInt(event.currentTarget.dataset.index, 10);
-        event.target.classList.add("drag");
-      }
-    
-      DragColOver(event) {
-        event.preventDefault();
-        return false;
-      }
-      DropCol(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        const DragColIndex = this.dragColStart;
-        const DropColIndex = parseInt(event.currentTarget.dataset.index, 10);
-        if (DragColIndex === DropColIndex) {
-          return false;
-        }
-        // Reorder the list
-        const elementToMove = this.ElementList.splice(DragColIndex, 1)[0];
-        this.ElementList.splice(DropColIndex, 0, elementToMove);
-
-        // Force the component to update with the new list
-        this.ElementList = [...this.ElementList];
-
-        const recordInputs = this.ElementList.map((col, index) => {
-            return {
-                fields: {
-                    Id: col.Id,
-                    col_order__c: index
-                }
-            };
-        });
-        recordInputs.forEach(recordInput => {
-            updateRecord(recordInput)
-            .then(() => {
-                // Optionally handle successful update
-            })
-            .catch(error => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'Error updating record',
-                        message: error.body.message,
-                        variant: 'error'
-                    })
-                );
-            });
-        });
     }
 }
