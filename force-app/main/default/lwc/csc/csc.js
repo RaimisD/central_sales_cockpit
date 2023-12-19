@@ -336,4 +336,54 @@ export default class Csc extends NavigationMixin(LightningElement) {
             console.log(error);
         }
     }
+      // column drag and drop
+      @track dragColStart;
+      DragColStart(event) {
+          this.dragColStart = parseInt(event.currentTarget.dataset.index, 10);
+          event.target.classList.add("drag");
+        }
+      
+        DragColOver(event) {
+          event.preventDefault();
+          return false;
+        }
+        DropCol(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          const DragColIndex = this.dragColStart;
+          const DropColIndex = parseInt(event.currentTarget.dataset.index, 10);
+          if (DragColIndex === DropColIndex) {
+            return false;
+          }
+          // Reorder the list
+          const elementToMove = this.ElementList.splice(DragColIndex, 1)[0];
+          this.ElementList.splice(DropColIndex, 0, elementToMove);
+  
+          // Force the component to update with the new list
+          this.ElementList = [...this.ElementList];
+  
+          const recordInputs = this.ElementList.map((col, index) => {
+              return {
+                  fields: {
+                      Id: col.Id,
+                      col_order__c: index
+                  }
+              };
+          });
+          recordInputs.forEach(recordInput => {
+              updateRecord(recordInput)
+              .then(() => {
+                  // Optionally handle successful update
+              })
+              .catch(error => {
+                  this.dispatchEvent(
+                      new ShowToastEvent({
+                          title: 'Error updating record',
+                          message: error.body.message,
+                          variant: 'error'
+                      })
+                  );
+              });
+          });
+      }
 }
