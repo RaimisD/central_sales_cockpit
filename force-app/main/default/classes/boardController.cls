@@ -9,7 +9,7 @@ public with sharing class boardController {
         (SELECT Id, Name, Order__c, Board_column__c FROM Contacts__r ORDER BY Order__c ASC), 
         (SELECT Id, Name, Order__c, Board_column__c FROM Leads__r ORDER BY Order__c ASC), 
         (SELECT Id, Name, Amount, Order__c, Board_column__c FROM Opportunities__r ORDER BY Order__c ASC) 
-        FROM Board_column__c WHERE Board__c = :boardId];
+        FROM Board_column__c WHERE Board__c = :boardId ORDER BY col_order__c ASC];
     }
     
     @AuraEnabled
