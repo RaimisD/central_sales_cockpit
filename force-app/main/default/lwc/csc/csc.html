@@ -12,17 +12,17 @@
                         <template for:each={ElementList} for:item="col" for:index="index">
                             <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small slds-box">
                                     <lightning-card title={col.Name} class="slds-m-bottom_small" draggable="true" 
-                                    ondrop={DropCol} 
-                                    ondragstart={DragColStart} 
-                                    ondragover={DragColOver} 
-                                    data-index={index} 
+                                    ondrop={DropCol}
+                                    ondragstart={DragColStart}
+                                    ondragover={DragColOver}
+                                    data-index={index}
                                     data-id={col.Id}>
                                         <p>{index}</p>
                                     </lightning-card>
                                 <div class="slds-m-bottom_large">
                                     <template for:each={col.Accounts__r} for:item="Acc" for:index="index">
                                         <div key={Acc.Id}  class="slds-m-bottom_large slds-m-top_large" data-id={Acc.Id}>
-                                            <lightning-card>
+                                            <lightning-card draggable="true">
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:account" alternative-text="Account" size="x-small" title="Account"></lightning-icon>
                                                     <a data-id={Acc.Id} onclick={navigateToRecord} >{Acc.Name}</a>
@@ -35,7 +35,7 @@
                                     </template>
                                     <template for:each={col.Contacts__r} for:item="Contact" for:index="index">
                                         <div key={Contact.Id} data-id={Contact.Id} class="slds-m-bottom_small slds-m-top_large">
-                                            <lightning-card>
+                                            <lightning-card draggable="true">
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small" title="contact"></lightning-icon>
                                                     <a data-id={Contact.Id} onclick={navigateToRecord} >{Contact.Name}</a>
@@ -48,7 +48,7 @@
                                     </template>
                                     <template for:each={col.Leads__r} for:item="Lead" for:index="index">
                                         <div key={Lead.Id} data-id={Lead.Id} class="slds-m-bottom_small slds-m-top_large">
-                                            <lightning-card>
+                                            <lightning-card draggable="true">
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:lead" alternative-text="Lead" size="x-small" title="Lead"></lightning-icon>
                                                     <a data-id={Lead.Id} onclick={navigateToRecord}>{Lead.Name}</a>
@@ -61,7 +61,7 @@
                                     </template>
                                     <template for:each={col.Opportunities__r} for:item="Opp" for:index="index">
                                         <div key={Opp.Id} data-id={Opp.Id} class="slds-m-bottom_small slds-m-top_large">
-                                            <lightning-card>
+                                            <lightning-card draggable="true">
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name="standard:opportunity" alternative-text="Opportunity" size="x-small" title="Opportunity"></lightning-icon>
                                                     <a data-id={Opp.Id} onclick={navigateToRecord}>{Opp.Name}</a>

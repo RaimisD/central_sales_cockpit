@@ -341,6 +341,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
       DragColStart(event) {
           this.dragColStart = parseInt(event.currentTarget.dataset.index, 10);
           event.target.classList.add("drag");
+          this.itemId = event.currentTarget.dataset.id;
+          console.log('selected item: ', this.itemId);
         }
       
         DragColOver(event) {
