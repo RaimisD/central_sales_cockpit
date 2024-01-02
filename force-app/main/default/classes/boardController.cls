@@ -3,12 +3,12 @@ public with sharing class boardController {
     public static list<Board__c> getBoardRecords() {
         return [SELECT Id, Name, board_order__c FROM Board__c ORDER BY board_order__c ASC];
     }
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled(cacheable=true) //ORDER BY Order__c ASC
     public static list<Board_column__c> getColumRecords(string boardId) {
-        return [SELECT Id, Name, (SELECT Id, Name, Order__c, Board_column__c FROM Accounts__r ORDER BY Order__c ASC), 
-        (SELECT Id, Name, Order__c, Board_column__c FROM Contacts__r ORDER BY Order__c ASC), 
-        (SELECT Id, Name, Order__c, Board_column__c FROM Leads__r ORDER BY Order__c ASC), 
-        (SELECT Id, Name, Amount, Order__c, Board_column__c FROM Opportunities__r ORDER BY Order__c ASC) 
+        return [SELECT Id, Name, (SELECT Id, Name, Order__c, Board_column__c FROM Accounts__r), 
+        (SELECT Id, Name, Order__c, Board_column__c FROM Contacts__r), 
+        (SELECT Id, Name, Order__c, Board_column__c FROM Leads__r), 
+        (SELECT Id, Name, Amount, Order__c, Board_column__c FROM Opportunities__r) 
         FROM Board_column__c WHERE Board__c = :boardId ORDER BY col_order__c ASC];
     }
     

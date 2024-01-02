@@ -3,7 +3,7 @@ import { NavigationMixin } from 'lightning/navigation'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { deleteRecord, getRecord, updateRecord, getRecords } from 'lightning/uiRecordApi';
 import { refreshApex } from "@salesforce/apex";
-import { getRelatedListRecordsBatch, getRelatedListInfo, getRelatedListInfoBatch,  getRelatedListRecords} from 'lightning/uiRelatedListApi';
+import { getRelatedListRecordsBatch, getRelatedListInfo, getRelatedListInfoBatch, getRelatedListRecords} from 'lightning/uiRelatedListApi';
 
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from  '@salesforce/apex/boardController.getColumRecords';
@@ -162,34 +162,66 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleEditSubmit(event){
     }
     /* ---------COLUMNS---------- */
-    /* -----LOAD COLUMNS AND RECORDS----- */
+    getIconName(recordType) {
+        const iconMap = {
+            'Accounts__r': 'standard:account',
+            'Contacts__r': 'standard:contact',
+            'Leads__r': 'standard:lead',
+            'Opportunities__r': 'standard:opportunity'
+        };
+        return iconMap[recordType] || 'standard:default';
+    }
+
+    combineChildRecords(column) {
+        let combined = [];
+        const recordTypes = ['Accounts__r', 'Contacts__r', 'Leads__r', 'Opportunities__r'];
+        
+        recordTypes.forEach(type => {
+            if (column[type]) {
+                combined = [
+                    ...combined,
+                    ...column[type].map(record => ({ 
+                        ...record, 
+                        recordType: type,
+                        iconName: this.getIconName(type)
+                    }))
+                ];
+            }
+        });
+        combined.sort((a, b) => {
+            return a.Order__c - b.Order__c;
+        });
+    
+        return combined;
+    }
+
     @api columns;
     @track columns;
     @track ElementList = [];
-    //@track ids;
     wiredColumnResult;
-    @wire(getColumRecords, {boardId: '$selectedTab'})
-    wiredColumns(result){
+    @wire(getColumRecords, { boardId: '$selectedTab' })
+    wiredColumns(result) {
         this.wiredColumnResult = result;
-        
-        if(result.data){
-            this.ElementList = [];
+        if (result.data) {
+            this.ElementList = result.data.map(column => ({
+                ...column,
+                childs: this.combineChildRecords(column)
+            }));
             this.columns = result.data;
-            for(let i=0; i<this.columns.length;i++){
-                this.ElementList.push(this.columns[i]);
-                //console.log('pushed this column: ',this.columns[i]);
-            }
             console.log('ElementList--------> ', this.ElementList);
             console.log('column data: ', result.data);
         }
-        else if(result.error){
+        else if (result.error) {
             this.columns = undefined;
             console.log('column error: ', result.error);
         }
-        else if(!result.data){
+        else if (!result.data) {
             console.log('no column data!');
         }
     }
+
+    /* -----LOAD COLUMNS AND RECORDS----- */
+
 
     /* -----ADD NEW COLUMN----- */
     @track addColumn = false;
@@ -223,169 +255,216 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     handleAddColumnSubmit(event){
     }
-    /* -----DRAG AND DROP----- */
-    // dragStart(event) {
-    //     event.dataTransfer.dropEffect = 'move';
-    //     event.dataTransfer.setData("text", event.target.dataset.id);
-    //     console.log('drag start')
-    // }
-    // allowDrop(event) {
-    //     event.preventDefault();
-    //     return false;
-    // }
-    // @track recId;
-    // @track colId;
-    // @track selectedId;
-    // drop(event) {
-    //     event.preventDefault();
-    //     event.dataTransfer.dropEffect = 'move';
-    //     var recordId = event.dataTransfer.getData("text");
-    //     this.recId = recordId;
-    //     var columnId = event.target.dataset.id;
-    //     this.colId = columnId;
-    //     console.log('dragged item: ', this.recId);
-    //     console.log('moving on: ', this.colId);
 
-    //     console.log('fire 1');
-    //     console.log('should be dropped on: ', columnId, ' record id: ', recordId);
-    // }
-    // dropOnCard(event) {
-    //     event.stopPropagation(); // Stop the event from propagating to the column
-    //     // Optionally, you can provide feedback to the user here
-    //     console.log('Dropping on cards is not allowed.');
-    // }
-    // @track objName;
-    // @wire(getRecord, {recordId: '$recId', layoutTypes: 'Full'})
-    // getRecData({error, data}){
-    //     if(data){
-    //         console.log('api name: ',data.apiName);
-    //         console.log('rec data: ', data);
-    //         console.log('board Id id: ', data.fields.Board__c.value);
-    //         this.objName = data.apiName;
-    //         this.updateColumn(this.recId, this.colId, this.objName);
-    //         console.log('fire 2');
-    //     }
-    //     else if(!data){
-    //         console.log('no data!');
-    //     }
-    //     else if(error){
-    //         console.log(error);
-    //     }
-    // }
-    // updateColumn(recordId, columnId, objName) {
-    //     updateColumn({ recordId: recordId, newColumnId: columnId,  recType: objName})
-    //     .then(result => {
-    //         this.dispatchEvent(
-    //             new ShowToastEvent({
-    //                 title: 'Success',
-    //                 message: 'Column changed successfully',
-    //                 variant: 'success'
-    //             })
-    //         );
-    //         refreshApex(this.wiredColumnResult);
-    //         this.objName = undefined;
-    //         this.recId = undefined;
-    //         this.colId = undefined;
-    //         console.log('api 2: ', this.objName);
-    //         console.log('rec 2: ', this.recId);
-    //         console.log('col 2: ', this.colId);
-    //     })
-    //     .catch(error => {
-    //         // Handle error
-    //     });
-    // }
-    // dragOver(event) {
-    //     console.log('should drop here');
-    // }
-    // dragOver2(event){
-    //     console.log('should not drop here')
-    // }
-
-
-    @wire(getRelatedListRecordsBatch, {
-        parentRecordId: 'a010600002V2FQGAA3',
-        relatedListParameters: [
-            {
-              relatedListId: 'Contacts__r',
-
-            },
-            {
-              relatedListId: 'Opportunities__r',
-
-            },
-            {
-            relatedListId: 'Accounts__r',
-
-            },
-            {
-            relatedListId: 'Leads__r',
-
-            }
-          ]
-    })
-    getBatchData({error, data}){
+      //------------- DRAG AND DROP
+    @track recId;
+    @track sourceColId;
+    @track targetColId;
+    @track selectedId;
+    dragStart(event) {
+        event.target.classList.add("drag");
+        event.dataTransfer.setData("text", event.target.dataset.id);
+        this.itemId = event.currentTarget.dataset.id;
+        this.sourceColId = event.currentTarget.dataset.sourceid;
+        console.log('Source col: ', this.sourceColId);
+        console.log('selected item: ', this.itemId);
+    }
+    @track itemId;
+    @track dragColStart;
+    DragColStart(event) {
+        this.dragColStart = parseInt(event.currentTarget.dataset.index, 10);
+        event.target.classList.add("drag");
+        this.itemId = event.currentTarget.dataset.id;
+        //console.log('selected item: ', this.itemId);
+    }
+    DragColOver(event) {
+        event.preventDefault();
+        return false;
+    }
+    @track objName;
+    @wire(getRecord, {recordId: '$itemId', layoutTypes: 'Full'})
+    getItemInfo({error, data}){
         if(data){
-            this.batchData = data;
-            console.log('test batch: ', this.batchData);
-            console.log('Batch id: ', data.results);
+            console.log('selected item: ', data);
+            console.log('Selected item info: ', data.apiName);
+            this.objName = data.apiName;
         }
         else if(!data){
-            console.log('no test batch data!');
+
         }
         else if(error){
-            console.log(error);
+
         }
     }
-      // column drag and drop
-      @track dragColStart;
-      DragColStart(event) {
-          this.dragColStart = parseInt(event.currentTarget.dataset.index, 10);
-          event.target.classList.add("drag");
-          this.itemId = event.currentTarget.dataset.id;
-          console.log('selected item: ', this.itemId);
+
+
+    DropCol(event) {
+        if(this.objName === 'Board_column__c'){
+            event.preventDefault();
+            event.stopPropagation();
+            const DragColIndex = this.dragColStart;
+            const DropColIndex = parseInt(event.currentTarget.dataset.index, 10);
+            if (DragColIndex === DropColIndex) {
+                return false;
+            }
+            // Reorder the list
+            const elementToMove = this.ElementList.splice(DragColIndex, 1)[0];
+            this.ElementList.splice(DropColIndex, 0, elementToMove);
+    
+            // Force the component to update with the new list
+            this.ElementList = [...this.ElementList];
+    
+            const recordInputs = this.ElementList.map((col, index) => {
+                return {
+                    fields: {
+                        Id: col.Id,
+                        col_order__c: index
+                    }
+                };
+            });
+            recordInputs.forEach(recordInput => {
+                updateRecord(recordInput)
+                .then(() => {
+                    // Optionally handle successful update
+                })
+                .catch(error => {
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Error updating record',
+                            message: error.body.message,
+                            variant: 'error'
+                        })
+                    );
+                });
+            });
         }
-      
-        DragColOver(event) {
-          event.preventDefault();
-          return false;
+        if(this.objName === 'Account' || this.objName === 'Opportunity' || this.objName === 'Lead' || this.objName === 'Contact'){
+            event.preventDefault();
+            this.recId = this.itemId; //SELECTED ITEM
+            var columnId = event.target.dataset.id; //TARGET COL
+            console.log('target: ', columnId);
+            if(columnId === undefined){
+                return;
+            }
+            this.targetColId = columnId; //TARGET COL
+            this.updateColumn(this.recId, this.targetColId, this.objName);
+            const sourceColumnId = this.sourceColId;
+            const newIndex = parseInt(event.currentTarget.dataset.cardindex, 10);
+
+            let sourceColumn = this.ElementList.find(col => col.childs.some(child => child.Id === this.recId));
+            let targetColumn = this.ElementList.find(col => col.Id === this.targetColId);
+            
+            if (sourceColumnId === this.targetColId && sourceColumn.childs.findIndex(child => child.Id === this.recId) === newIndex) {
+                return;
+            }
+            let [movedRecord] = sourceColumn.childs.splice(sourceColumn.childs.findIndex(child => child.Id === this.recId), 1);
+            targetColumn.childs.splice(newIndex, 0, movedRecord);
+            let updates = [];
+
+            if (sourceColumnId !== this.targetColId) {
+                sourceColumn.childs.forEach((child, index) => {
+                    updates.push(this.createUpdateRecordInput(child.Id, index, child.recordType));
+                });
+            }
+
+            targetColumn.childs.forEach((child, index) => {
+                updates.push(this.createUpdateRecordInput(child.Id, index, child.recordType));
+            });
+            this.updateRecords(updates);
         }
-        DropCol(event) {
-          event.preventDefault();
-          event.stopPropagation();
-          const DragColIndex = this.dragColStart;
-          const DropColIndex = parseInt(event.currentTarget.dataset.index, 10);
-          if (DragColIndex === DropColIndex) {
-            return false;
-          }
-          // Reorder the list
-          const elementToMove = this.ElementList.splice(DragColIndex, 1)[0];
-          this.ElementList.splice(DropColIndex, 0, elementToMove);
-  
-          // Force the component to update with the new list
-          this.ElementList = [...this.ElementList];
-  
-          const recordInputs = this.ElementList.map((col, index) => {
-              return {
-                  fields: {
-                      Id: col.Id,
-                      col_order__c: index
-                  }
-              };
-          });
-          recordInputs.forEach(recordInput => {
-              updateRecord(recordInput)
-              .then(() => {
-                  // Optionally handle successful update
-              })
-              .catch(error => {
-                  this.dispatchEvent(
-                      new ShowToastEvent({
-                          title: 'Error updating record',
-                          message: error.body.message,
-                          variant: 'error'
-                      })
-                  );
-              });
-          });
-      }
+    }
+
+    createUpdateRecordInput(recordId, newOrder, objectName) {
+        // Map the object name to the API field name for Board_column__c
+        const boardColumnFieldMap = {
+            'Account': 'Accounts__r',
+            'Opportunity': 'Opportunities__r',
+            'Lead': 'Leads__r',
+            'Contact': 'Contacts__r'
+        };
+        const fieldApiName = boardColumnFieldMap[objectName] || 'Board_column__c';
+    
+        return {
+            fields: {
+                Id: recordId,
+                Order__c: newOrder,
+                [fieldApiName]: this.colId
+            }
+        };
+    }
+    updateRecords(recInputs) {
+        // Handle the updates (for simplicity, using Promise.all here, but you may want to handle them individually)
+        const updatePromises = recInputs.map(recordInput => updateRecord(recordInput));
+        Promise.all(updatePromises)
+        .then(() => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'changed',
+                    variant: 'success'
+                })
+            );
+            
+            this.recId = undefined;
+            this.targetColId = undefined;
+            refreshApex(this.wiredColumnResult);
+        })
+        .catch(error => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'error',
+                    variant: 'error'
+                })
+            );
+        });
+    }
+
+    updateColumn(recordId, columnId, objName) {
+        updateColumn({ recordId: recordId, newColumnId: columnId,  recType: objName})
+        .then(result => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'changed',
+                    variant: 'success'
+                })
+            );
+            
+            //this.recId = undefined;
+            //this.targetColId = undefined;
+            //refreshApex(this.wiredColumnResult);
+        })
+        .catch(error => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'error',
+                    variant: 'error'
+                })
+            );
+        });
+    }
 }
+    // @api columns;
+    // @track columns;
+    // @track ElementList = [];
+    // wiredColumnResult;
+    // @wire(getColumRecords, {boardId: '$selectedTab'})
+    // wiredColumns(result){
+    //     this.wiredColumnResult = result;      
+    //     if(result.data){
+    //         this.ElementList = [];
+    //         this.columns = result.data;
+    //         for(let i=0; i<this.columns.length;i++){
+    //             this.ElementList.push(this.columns[i]);
+    //             console.log('pushed this column: ',this.columns[i]);
+    //         }
+    //         console.log('ElementList--------> ', this.ElementList);
+    //         console.log('column data: ', result.data);
+
+    //     }
+    //     else if(result.error){
+    //         this.columns = undefined;
+    //         console.log('column error: ', result.error);
+    //     }
+    //     else if(!result.data){
+    //         console.log('no column data!');
+    //     }
+    // }
