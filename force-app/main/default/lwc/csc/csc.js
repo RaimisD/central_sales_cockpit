@@ -6,7 +6,7 @@ import { refreshApex } from "@salesforce/apex";
 import { getRelatedListRecordsBatch, getRelatedListInfo, getRelatedListInfoBatch,  getRelatedListRecords} from 'lightning/uiRelatedListApi';
 
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
-import getColumRecords from '@salesforce/apex/boardController.getColumRecords';
+import getColumRecords from  '@salesforce/apex/boardController.getColumRecords';
 import updateColumn from '@salesforce/apex/boardController.updateColumn';
 import ACCOUNT_NAME_FIELD from "@salesforce/schema/Account.Name";
 import LEAD_NAME_FIELD from "@salesforce/schema/Lead.Name";
