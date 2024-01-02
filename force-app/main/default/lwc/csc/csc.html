@@ -10,7 +10,7 @@
                     <p>{board.board_order__c}</p>
                     <div class="slds-grid">
                         <template for:each={ElementList} for:item="col" for:index="index">
-                            <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small slds-box" ondrop={DropCol} ondragover={DragColOver} data-id={col.Id}>
+                            <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small slds-box" ondrop={DropCol} ondragover={DragColOver} data-dropid={col.Id}> <!-- ondrop={DropCol} ondragover={DragColOver} data-id={col.Id} -->
                                 <lightning-card title={col.Name} class="slds-m-bottom_small" draggable="true" 
                                     ondrop={DropCol}
                                     ondragstart={DragColStart}
@@ -20,18 +20,22 @@
                                 </lightning-card>
                                 <div class="slds-m-bottom_large">
                                     <template for:each={col.childs} for:item="child" for:index="childIndex">
-                                        <div key={child.Id} data-id={child.Id} data-sourceid={child.Board_column__c} class="slds-m-bottom_small slds-m-top_large">
+                                        <div key={child.Id} class="slds-m-bottom_small slds-m-top_large"> <!-- data-id={child.Id} data-id2={child.Board_column__c} data-sourceid={child.Board_column__c}  ondragover={DragColOver}  -->
                                             <lightning-card draggable="true" 
                                                 ondragstart={dragStart} 
                                                 ondragover={DragColOver} 
-                                                data-id={child.Id}
+                                                data-dropid={child.Id}
+                                                data-id2={child.Board_column__c}
                                                 data-cardindex={childIndex}
                                                 data-sourceid={child.Board_column__c}>
                                                 <div slot="title" class="slds-truncate">
                                                     <lightning-icon icon-name={child.iconName} alternative-text={child.recordType} size="x-small" title={child.recordType}></lightning-icon>
-                                                    <a data-id={child.Id} onclick={navigateToRecord}>{child.Name}</a>
+                                                    <a onclick={navigateToRecord} data-id={child.Id} data-dropid={child.Board_column__c}>{child.Name}</a>
                                                 </div>
-                                                <div>
+                                                <div data-id={child.Id}
+                                                data-dropid={child.Board_column__c}
+                                                data-cardindex={childIndex}
+                                                data-sourceid={child.Board_column__c}>
                                                     <p>index: {childIndex}</p>
                                                     <p class="slds-truncate">{child.Id}</p>
                                                     <p>order: {child.Order__c}</p>

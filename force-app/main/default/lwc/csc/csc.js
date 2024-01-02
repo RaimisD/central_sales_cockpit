@@ -264,7 +264,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
     dragStart(event) {
         event.target.classList.add("drag");
         event.dataTransfer.setData("text", event.target.dataset.id);
-        this.itemId = event.currentTarget.dataset.id;
+        this.itemId = event.currentTarget.dataset.dropid;
         this.sourceColId = event.currentTarget.dataset.sourceid;
         console.log('Source col: ', this.sourceColId);
         console.log('selected item: ', this.itemId);
@@ -285,7 +285,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
     @wire(getRecord, {recordId: '$itemId', layoutTypes: 'Full'})
     getItemInfo({error, data}){
         if(data){
-            console.log('selected item: ', data);
             console.log('Selected item info: ', data.apiName);
             this.objName = data.apiName;
         }
@@ -296,7 +295,21 @@ export default class Csc extends NavigationMixin(LightningElement) {
 
         }
     }
+    @track targetColId;
+    @track droppedOnObj;
+    @wire(getRecord, {recordId: '$targetColId', layoutTypes: 'Full'})
+    getTargetInfo({error, data}){
+        if(data){
+            console.log('dropped on item: ', data);
+            this.droppedOnObj = data.apiName;
+        }
+        else if(!data){
 
+        }
+        else if(error){
+
+        }
+    }
 
     DropCol(event) {
         if(this.objName === 'Board_column__c'){
@@ -340,8 +353,10 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
         if(this.objName === 'Account' || this.objName === 'Opportunity' || this.objName === 'Lead' || this.objName === 'Contact'){
             event.preventDefault();
+            console.log('HERE 1');
             this.recId = this.itemId; //SELECTED ITEM
-            var columnId = event.target.dataset.id; //TARGET COL
+            console.log('HERE 2');
+            var columnId = event.target.dataset.dropid; //TARGET COL
             console.log('target: ', columnId);
             if(columnId === undefined){
                 return;
@@ -442,29 +457,3 @@ export default class Csc extends NavigationMixin(LightningElement) {
         });
     }
 }
-    // @api columns;
-    // @track columns;
-    // @track ElementList = [];
-    // wiredColumnResult;
-    // @wire(getColumRecords, {boardId: '$selectedTab'})
-    // wiredColumns(result){
-    //     this.wiredColumnResult = result;      
-    //     if(result.data){
-    //         this.ElementList = [];
-    //         this.columns = result.data;
-    //         for(let i=0; i<this.columns.length;i++){
-    //             this.ElementList.push(this.columns[i]);
-    //             console.log('pushed this column: ',this.columns[i]);
-    //         }
-    //         console.log('ElementList--------> ', this.ElementList);
-    //         console.log('column data: ', result.data);
-
-    //     }
-    //     else if(result.error){
-    //         this.columns = undefined;
-    //         console.log('column error: ', result.error);
-    //     }
-    //     else if(!result.data){
-    //         console.log('no column data!');
-    //     }
-    // }
