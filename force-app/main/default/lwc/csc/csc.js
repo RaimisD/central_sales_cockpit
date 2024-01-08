@@ -1,9 +1,8 @@
 import { api, LightningElement, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { deleteRecord, getRecord, updateRecord, getRecords } from 'lightning/uiRecordApi';
+import { deleteRecord, getRecord, updateRecord } from 'lightning/uiRecordApi';
 import { refreshApex } from "@salesforce/apex";
-import { getRelatedListRecordsBatch, getRelatedListInfo, getRelatedListInfoBatch, getRelatedListRecords} from 'lightning/uiRelatedListApi';
 
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from  '@salesforce/apex/boardController.getColumRecords';
@@ -28,8 +27,7 @@ import LEADCOL_FIELD from '@salesforce/schema/Lead.Board_column__c';
 
 export default class Csc extends NavigationMixin(LightningElement) {
     connectedCallback() {
-        //console.log("Board open? ", this.addBoardOpen);
-        //console.log("Column open? ", this.addColumn);
+
     }
     navigateToRecord(event) {  //generates link to record
         event.stopPropagation();
@@ -48,18 +46,21 @@ export default class Csc extends NavigationMixin(LightningElement) {
     @track selectedTab;
     handleTabSelect(event){ //checks which column is selected to pass value
         this.selectedTab = event.target.value;
-        //this.loadColumnRecords();
-        //console.log('selected tab: ', event.target.value);
     }
     @api boards;
     @track boards;
+    @track boardList = [];
     wiredBoardsResult;
     /* -----LOAD BOARDS----- */
     @wire(getBoardRecords)
     wiredBoards(result){
         this.wiredBoardsResult = result;
+        console.log(this.wiredBoardsResult);
         if(result.data){
             this.boards = result.data;
+            this.boardList = result.data.map(board=>({
+                ...board
+            }))
             //console.log('board data: ',this.boards);
         }
         else if(result.error){
@@ -111,10 +112,12 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleOpenSettings(event){
         this.showSettings = true;
     }
+
     handleCloseSettings(event){
         this.showSettings = false;
         this.editRecordId = undefined;
-        //console.log('closed value: ', this.editRecordId);
+        refreshApex(this.wiredBoardsResult);
+        window.location.reload()
     }
     @api id;
     async handleDeleteBoard(event){
@@ -278,8 +281,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         event.dataTransfer.setData("text", event.target.dataset.id);
         this.itemId = event.currentTarget.dataset.dropid;
         this.sourceColId = event.currentTarget.dataset.sourceid;
-        //console.log('Source col: ', this.sourceColId);
-        //console.log('selected item: ', this.itemId);
     }
     @track itemId;
     @track dragColStart;
@@ -287,7 +288,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         this.dragColStart = parseInt(event.currentTarget.dataset.index, 10);
         event.target.classList.add("drag");
         this.itemId = event.currentTarget.dataset.id;
-        //console.log('selected item: ', this.itemId);
     }
     DragColOver(event) {
         event.preventDefault();
@@ -553,22 +553,71 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
         const recordInput = { fields };
         updateRecord(recordInput)
-            .then(() => {
-                this.dispatchEvent(
-                    new ShowToastEvent({
-                        title: 'card removed',
-                        variant: 'success'
-                    })
-                );
-                refreshApex(this.wiredColumnResult);
+        .then(() => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'card removed',
+                    variant: 'success'
+                })
+            );
+            refreshApex(this.wiredColumnResult);
+        })
+        .catch(error => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'ERROR WHILE REMOVING',
+                    variant: 'error'
+                })
+            );
+        });
+    }
+    // board drag and drop
+    @track dragBoardStart;
+    boardDragStart(event){
+        this.dragBoardStart = parseInt(event.currentTarget.dataset.index, 10);
+        event.target.classList.add("drag");
+    }
+    dropBoard(event){
+        event.preventDefault();
+        event.stopPropagation();
+        const DragBoardIndex = this.dragBoardStart;
+        const DropBoardIndex = parseInt(event.currentTarget.dataset.index, 10);
+        if(DragBoardIndex === DropBoardIndex){
+            return false;
+        }
+        const boardToMove = this.boardList.splice(DragBoardIndex, 1)[0];
+        this.boardList.splice(DropBoardIndex, 0, boardToMove);
+
+        this.boardList = [...this.boardList]
+
+        const boardInputs = this.boardList.map((board, index)=>{
+            return{
+                fields:{
+                    Id: board.Id,
+                    board_order__c: index
+                }
+            };
+        });
+        boardInputs.forEach(boardInput => {
+            updateRecord(boardInput)
+            .then(()=>{
+
             })
-            .catch(error => {
+            .catch(error=>{
                 this.dispatchEvent(
                     new ShowToastEvent({
-                        title: 'ERROR WHILE REMOVING',
+                        title: 'Error updating record',
+                        message: error.body.message,
                         variant: 'error'
                     })
                 );
             });
+        });
+        //await refreshApex(this.wiredBoardsResult);
+
+    }
+    dragBoardOver(event){
+        event.preventDefault();
+        return false;
     }
 }

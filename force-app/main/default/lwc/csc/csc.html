@@ -5,9 +5,10 @@
             <lightning-button-icon class="slds-m-left_large" icon-name="utility:settings" variant="bare" alternative-text="Settings" title="Settings" onclick={handleOpenSettings}></lightning-button-icon>
         </div>
         <lightning-tabset variant="vertical">
-            <template for:each={boards} for:item="board" for:index="index">
+            <template for:each={boardList} for:item="board" for:index="index">
                 <lightning-tab label={board.Name} key={board.Id} onactive={handleTabSelect} value={board.Id} data-id={board.Id}>
-                    <p>{board.board_order__c}</p>
+                    <p>index: {index}</p>
+                    <p>order: {board.board_order__c}</p>
                     <div class="slds-grid">
                         <template for:each={ElementList} for:item="col" for:index="index">
                             <div key={col.Id} class="slds-col slds-size_1-of-12 slds-m-horizontal_xx-small slds-box" ondrop={DropCol} ondragover={DragColOver} data-dropid={col.Id}> <!-- ondrop={DropCol} ondragover={DragColOver} data-id={col.Id} -->
@@ -127,10 +128,23 @@
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
                         <!-- Content of the modal -->
-                        <template for:each={boards} for:item="board" for:index="index">
-                            <div key={board.Id} class="slds-box slds-m-bottom_small slds-align_absolute-center">
-                                <lightning-card>
+                        <template for:each={boardList} for:item="board" for:index="index">
+                            <div key={board.Id} class="slds-box slds-m-bottom_small slds-align_absolute-center" 
+                            draggable="true" 
+                            ondragstart={boardDragStart} 
+                            data-id={board.Id} 
+                            data-index={index}
+                            ondragover={dragBoardOver}
+                            ondrop={dropBoard}>
+                                <lightning-card draggable="true" 
+                                ondragstart={boardDragStart} 
+                                data-id={board.Id} 
+                                data-index={index}
+                                ondragover={dragBoardOver}
+                                ondrop={dropBoard}>
                                     <p class="slds-float_left">{board.Name}</p>
+                                    <!-- <p>index: {index}</p>
+                                    <p>order: {board.board_order__c}</p> -->
                                     <lightning-button-icon icon-name="utility:edit" variant="bare" alternative-text="Edit" title="Edit" onclick={handleEditButton} data-id={board.Id}></lightning-button-icon>
                                     <lightning-button-icon icon-name="utility:delete" variant="bare" label="Delete" alternative-text="Delete" title="Delete" data-id={board.Id} onclick={handleDeleteBoard}></lightning-button-icon>
                                 </lightning-card>
