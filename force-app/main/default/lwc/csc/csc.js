@@ -16,8 +16,8 @@ import CONTACT_NAME_FIELD from "@salesforce/schema/Contact.Name";
 
 export default class Csc extends NavigationMixin(LightningElement) {
     connectedCallback() {
-        console.log("Board open? ", this.addBoardOpen);
-        console.log("Column open? ", this.addColumn);
+        //console.log("Board open? ", this.addBoardOpen);
+        //console.log("Column open? ", this.addColumn);
     }
     navigateToRecord(event) {  //generates link to record
         event.stopPropagation();
@@ -37,7 +37,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleTabSelect(event){ //checks which column is selected to pass value
         this.selectedTab = event.target.value;
         //this.loadColumnRecords();
-        console.log('selected tab: ', event.target.value);
+        //console.log('selected tab: ', event.target.value);
     }
     @api boards;
     @track boards;
@@ -48,14 +48,14 @@ export default class Csc extends NavigationMixin(LightningElement) {
         this.wiredBoardsResult = result;
         if(result.data){
             this.boards = result.data;
-            console.log('board data: ',this.boards);
+            //console.log('board data: ',this.boards);
         }
         else if(result.error){
-            console.log('error 1: ', result.error);
+            //console.log('error 1: ', result.error);
             this.boards = undefined;
         }
         else if(!result.data){
-            console.log('no data 1');
+            //console.log('no data 1');
         }
     }
     /* -----ADD NEW BOARD----- */
@@ -63,12 +63,12 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleAddBoard(event){
         this.showSettings = false;
         this.addBoardOpen = true;
-        console.log("Board open? ", this.addBoardOpen);
+        //console.log("Board open? ", this.addBoardOpen);
     }
     handleCloseAddBoard(event){
         this.addBoardOpen = false;
         this.showSettings = true;
-        console.log("Board open? ", this.addBoardOpen);
+        //console.log("Board open? ", this.addBoardOpen);
     }
     async handleCreateBoardSuccess(event){
         try{
@@ -102,12 +102,12 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleCloseSettings(event){
         this.showSettings = false;
         this.editRecordId = undefined;
-        console.log('closed value: ', this.editRecordId);
+        //console.log('closed value: ', this.editRecordId);
     }
     @api id;
     async handleDeleteBoard(event){
         const boardId = event.currentTarget.dataset.id;
-        console.log('boardId: ', boardId);
+        //console.log('boardId: ', boardId);
         try{
             await deleteRecord(boardId);
             this.dispatchEvent(
@@ -133,7 +133,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
     handleEditButton(event){
         this.recordIdToEdit = event.currentTarget.dataset.id;
         this.openEditor = true;
-        console.log('record to edit: ', this.recordIdToEdit);
+        //console.log('record to edit: ', this.recordIdToEdit);
     }
     handleCancelRename(event){
         this.openEditor = false;
@@ -208,15 +208,15 @@ export default class Csc extends NavigationMixin(LightningElement) {
                 childs: this.combineChildRecords(column)
             }));
             this.columns = result.data;
-            console.log('ElementList--------> ', this.ElementList);
-            console.log('column data: ', result.data);
+            //console.log('ElementList--------> ', this.ElementList);
+            //console.log('column data: ', result.data);
         }
         else if (result.error) {
             this.columns = undefined;
-            console.log('column error: ', result.error);
+            //console.log('column error: ', result.error);
         }
         else if (!result.data) {
-            console.log('no column data!');
+            //console.log('no column data!');
         }
     }
 
@@ -227,11 +227,11 @@ export default class Csc extends NavigationMixin(LightningElement) {
     @track addColumn = false;
     handleAddColumn(event){
         this.addColumn = true;
-        console.log("column open? ", this.addColumn);
+        //console.log("column open? ", this.addColumn);
     }
     handleCloseAddColumn(event){
         this.addColumn = false;
-        console.log("column open? ", this.addColumn);
+        //console.log("column open? ", this.addColumn);
     }
     async handleAddColumnSuccess(event){
         try{
@@ -266,8 +266,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
         event.dataTransfer.setData("text", event.target.dataset.id);
         this.itemId = event.currentTarget.dataset.dropid;
         this.sourceColId = event.currentTarget.dataset.sourceid;
-        console.log('Source col: ', this.sourceColId);
-        console.log('selected item: ', this.itemId);
+        //console.log('Source col: ', this.sourceColId);
+        //console.log('selected item: ', this.itemId);
     }
     @track itemId;
     @track dragColStart;
@@ -285,7 +285,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
     @wire(getRecord, {recordId: '$itemId', layoutTypes: 'Full'})
     getItemInfo({error, data}){
         if(data){
-            console.log('Selected item info: ', data.apiName);
+            //console.log('Selected item info: ', data.apiName);
             this.objName = data.apiName;
         }
         else if(!data){
@@ -300,7 +300,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
     @wire(getRecord, {recordId: '$targetColId', layoutTypes: 'Full'})
     getTargetInfo({error, data}){
         if(data){
-            console.log('dropped on item: ', data);
+            //console.log('dropped on item: ', data);
             this.droppedOnObj = data.apiName;
         }
         else if(!data){
@@ -353,18 +353,22 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
         if(this.objName === 'Account' || this.objName === 'Opportunity' || this.objName === 'Lead' || this.objName === 'Contact'){
             event.preventDefault();
-            console.log('HERE 1');
+            //console.log('HERE 1');
             this.recId = this.itemId; //SELECTED ITEM
-            console.log('HERE 2');
+            //console.log('HERE 2');
             var columnId = event.target.dataset.dropid; //TARGET COL
-            console.log('target: ', columnId);
+            //console.log('target: ', columnId);
             if(columnId === undefined){
                 return;
             }
             this.targetColId = columnId; //TARGET COL
             this.updateColumn(this.recId, this.targetColId, this.objName);
             const sourceColumnId = this.sourceColId;
-            const newIndex = parseInt(event.currentTarget.dataset.cardindex, 10);
+            const newIndex = parseInt(event.target.dataset.cardindex, 10);
+
+            //const testIndex = event.target.dataset.cardindex;
+            //console.log('dropped on index: ', testIndex);
+            console.log('dropped on index: ', newIndex);
 
             let sourceColumn = this.ElementList.find(col => col.childs.some(child => child.Id === this.recId));
             let targetColumn = this.ElementList.find(col => col.Id === this.targetColId);
