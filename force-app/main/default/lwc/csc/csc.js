@@ -8,10 +8,22 @@ import { getRelatedListRecordsBatch, getRelatedListInfo, getRelatedListInfoBatch
 import getBoardRecords from '@salesforce/apex/boardController.getBoardRecords';
 import getColumRecords from  '@salesforce/apex/boardController.getColumRecords';
 import updateColumn from '@salesforce/apex/boardController.updateColumn';
-import ACCOUNT_NAME_FIELD from "@salesforce/schema/Account.Name";
-import LEAD_NAME_FIELD from "@salesforce/schema/Lead.Name";
-import OPPORTUNITY_NAME_FIELD from "@salesforce/schema/Opportunity.Name";
-import CONTACT_NAME_FIELD from "@salesforce/schema/Contact.Name";
+
+import OPPORTUNITYID_FIELD from '@salesforce/schema/Opportunity.Id';
+import OPPORTUNITYBOARD_FIELD from '@salesforce/schema/Opportunity.Board__c';
+import OPPORTUNITYCOL_FIELD from '@salesforce/schema/Opportunity.Board_column__c';
+
+import ACCOUNTID_FIELD from '@salesforce/schema/Account.Id';
+import ACCOUNTBOARD_FIELD from '@salesforce/schema/Account.Board__c';
+import ACCOUNTCOL_FIELD from '@salesforce/schema/Account.Board_column__c';
+
+import CONTACTID_FIELD from '@salesforce/schema/Contact.Id';
+import CONTACTBOARD_FIELD from '@salesforce/schema/Contact.Board__c';
+import CONTACTCOL_FIELD from '@salesforce/schema/Contact.Board_column__c';
+
+import LEADID_FIELD from '@salesforce/schema/Lead.Id';
+import LEADBOARD_FIELD from '@salesforce/schema/Lead.Board__c';
+import LEADCOL_FIELD from '@salesforce/schema/Lead.Board_column__c';
 
 
 export default class Csc extends NavigationMixin(LightningElement) {
@@ -459,5 +471,104 @@ export default class Csc extends NavigationMixin(LightningElement) {
                 })
             );
         });
+    }
+    async handleDeleteColumn(event){
+        const colId = event.currentTarget.dataset.colid;
+        try{
+            await deleteRecord(colId);
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: "column deleted!",
+                    variant: "success",
+                })
+            );
+            await refreshApex(this.wiredColumnResult);
+        }catch(error){
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error deleting column',
+                    variant: 'error',
+                })
+            );
+        }
+    }
+    @track editColumn = false;
+    @track colToEditName;
+
+    handleEditColumn(event){
+        this.editColumn = true;
+        this.colToEditName = event.currentTarget.dataset.colid;
+    }
+    handleCancelColRename(event){
+        this.editColumn = false;
+        this.colToEditName = undefined;
+    }
+    async handleEditColSuccess(event){
+        try{
+        this.editColumn = false;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Name changed',
+                    variant: 'success'
+                })
+            );
+            this.colToEditName = undefined;
+            await refreshApex(this.wiredColumnResult);
+        }catch(error){
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'ERROR WHILE CHANGING NAME',
+                    variant: 'error',
+                })
+            );
+            this.colToEditName = undefined;
+        }
+        
+    }
+    @track currentType;
+    handleEditColSubmit(event){}
+    removeCard(event){
+        const cardId = event.target.dataset.id;
+        const fields = {};
+        this.currentType = event.currentTarget.dataset.type;
+        if(this.currentType === 'Accounts__r'){
+            fields[ACCOUNTID_FIELD.fieldApiName] = cardId;
+            fields[ACCOUNTBOARD_FIELD.fieldApiName] = null;
+            fields[ACCOUNTCOL_FIELD.fieldApiName] = null;
+        }
+        if(this.currentType === 'Contacts__r'){
+            fields[CONTACTID_FIELD.fieldApiName] = cardId;
+            fields[CONTACTBOARD_FIELD.fieldApiName] = null;
+            fields[CONTACTCOL_FIELD.fieldApiName] = null;
+        }
+        if(this.currentType === 'Leads__r'){
+            fields[LEADID_FIELD.fieldApiName] = cardId;
+            fields[LEADBOARD_FIELD.fieldApiName] = null;
+            fields[LEADCOL_FIELD.fieldApiName] = null;
+        }
+        if(this.currentType === 'Opportunities__r'){
+            fields[OPPORTUNITYID_FIELD.fieldApiName] = cardId;
+            fields[OPPORTUNITYBOARD_FIELD.fieldApiName] = null;
+            fields[OPPORTUNITYCOL_FIELD.fieldApiName] = null;
+        }
+        const recordInput = { fields };
+        updateRecord(recordInput)
+            .then(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'card removed',
+                        variant: 'success'
+                    })
+                );
+                refreshApex(this.wiredColumnResult);
+            })
+            .catch(error => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'ERROR WHILE REMOVING',
+                        variant: 'error'
+                    })
+                );
+            });
     }
 }

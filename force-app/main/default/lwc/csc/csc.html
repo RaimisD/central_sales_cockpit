@@ -17,6 +17,9 @@
                                     ondragover={DragColOver}
                                     data-index={index}
                                     data-id={col.Id}>
+                                    
+                                    <lightning-button-icon icon-name="utility:edit" variant="bare" alternative-text="Edit" title="Edit" onclick={handleEditColumn} data-colid={col.Id} slot="actions"></lightning-button-icon>
+                                    <lightning-button-icon icon-name="utility:delete" variant="bare" label="Delete" alternative-text="Delete" title="Delete" data-colid={col.Id} onclick={handleDeleteColumn} slot="actions"></lightning-button-icon>
                                 </lightning-card>
                                 <div class="slds-m-bottom_large">
                                     <template for:each={col.childs} for:item="child" for:index="childIndex">
@@ -32,12 +35,15 @@
                                                     <lightning-icon icon-name={child.iconName} alternative-text={child.recordType} size="x-small" title={child.recordType}></lightning-icon>
                                                     <a onclick={navigateToRecord} data-id={child.Id} data-cardindex={childIndex} data-dropid={child.Board_column__c}>{child.Name}</a>
                                                 </div>
+                                                <lightning-button-icon icon-name="utility:dash" variant="bare" label="Remove" alternative-text="Remove" title="Remove" data-id={child.Id} data-type={child.recordType} onclick={removeCard} slot="actions"></lightning-button-icon>
+                                                
                                                 <div data-id={child.Id}
                                                 data-dropid={child.Board_column__c}
                                                 data-cardindex={childIndex}
                                                 data-sourceid={child.Board_column__c}>
                                                     index: {childIndex}
                                                     order: {child.Order__c}
+                                                    type: {child.recordType}
                                                 </div>
                                             </lightning-card>
                                         </div>
@@ -169,69 +175,26 @@
             <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
         </template>
     </div>
+    <template if:true={editColumn}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-05" class="slds-modal__title slds-hyphenate">Edit column name</h1>
+                    <button class="slds-button slds-button_icon-inverse slds-modal__close" title="Close" onclick={handleCancelColRename}>
+                        <lightning-icon icon-name="utility:close" alternative-text="Close"></lightning-icon>
+                    </button>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-5">
+                    <lightning-record-edit-form record-id={colToEditName} object-api-name="Board_column__c" onsuccess={handleEditColSuccess} onsubmit={handleEditColSubmit}>
+                        <lightning-input-field field-name="Name" required></lightning-input-field>
+                        <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="Update" label="Update"></lightning-button>
+                    </lightning-record-edit-form>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral slds-float_right" aria-label="Cancel" onclick={handleCancelColRename}>Cancel</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
 </template>
-                                    <!-- <template for:each={col.Accounts__r} for:item="Acc" for:index="index">
-                                        <div key={Acc.Id}  class="slds-m-bottom_large slds-m-top_large" data-id={Acc.Id}>
-                                            <lightning-card draggable="true"
-                                            ondragstart={dragStart}
-                                            ondragover={DragColOver} 
-                                            data-id={Acc.Id}>
-                                                <div slot="title" class="slds-truncate">
-                                                    <lightning-icon icon-name="standard:account" alternative-text="Account" size="x-small" title="Account"></lightning-icon>
-                                                    <a data-id={Acc.Id} onclick={navigateToRecord} >{Acc.Name}</a>
-                                                </div>
-                                                <p>index: {index}</p>
-                                                <p class="slds-truncate">{Acc.Id}</p>
-                                                <p>order: {Acc.Order__c}</p>
-                                            </lightning-card>
-                                        </div>
-                                    </template>
-                                    <template for:each={col.Contacts__r} for:item="Contact" for:index="index">
-                                        <div key={Contact.Id} data-id={Contact.Id} class="slds-m-bottom_small slds-m-top_large">
-                                            <lightning-card draggable="true"
-                                            ondragstart={dragStart}
-                                            ondragover={DragColOver} 
-                                            data-id={Contact.Id}>
-                                                <div slot="title" class="slds-truncate">
-                                                    <lightning-icon icon-name="standard:contact" alternative-text="contact" size="x-small" title="contact"></lightning-icon>
-                                                    <a data-id={Contact.Id} onclick={navigateToRecord} >{Contact.Name}</a>
-                                                </div>
-                                                <p>index: {index}</p>
-                                                <p class="slds-truncate">{Contact.Id}</p>
-                                                <p>order: {Contact.Order__c}</p>
-                                            </lightning-card>
-                                        </div>
-                                    </template>
-                                    <template for:each={col.Leads__r} for:item="Lead" for:index="index">
-                                        <div key={Lead.Id} data-id={Lead.Id} class="slds-m-bottom_small slds-m-top_large">
-                                            <lightning-card draggable="true"
-                                            ondragstart={dragStart}
-                                            ondragover={DragColOver} 
-                                            data-id={Lead.Id}>
-                                                <div slot="title" class="slds-truncate">
-                                                    <lightning-icon icon-name="standard:lead" alternative-text="Lead" size="x-small" title="Lead"></lightning-icon>
-                                                    <a data-id={Lead.Id} onclick={navigateToRecord}>{Lead.Name}</a>
-                                                </div>
-                                                <p>index: {index}</p>
-                                                <p class="slds-truncate">{Lead.Id}</p>
-                                                <p>order: {Lead.Order__c}</p>
-                                            </lightning-card>
-                                        </div>
-                                    </template>
-                                    <template for:each={col.Opportunities__r} for:item="Opp" for:index="index">
-                                        <div key={Opp.Id} data-id={Opp.Id} class="slds-m-bottom_small slds-m-top_large">
-                                            <lightning-card draggable="true"
-                                            ondragstart={dragStart}
-                                            ondragover={DragColOver} 
-                                            data-id={Opp.Id}>
-                                                <div slot="title" class="slds-truncate">
-                                                    <lightning-icon icon-name="standard:opportunity" alternative-text="Opportunity" size="x-small" title="Opportunity"></lightning-icon>
-                                                    <a data-id={Opp.Id} onclick={navigateToRecord}>{Opp.Name}</a>
-                                                </div>
-                                                <p>index: {index}</p>
-                                                <p class="slds-truncate">{Opp.Id}</p>
-                                                <p>order: {Opp.Order__c}</p>
-                                                <p class="slds-m-left_large">€ {Opp.Amount}</p>
-                                            </lightning-card>
-                                        </div>
-                                    </template> -->
