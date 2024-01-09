@@ -3,7 +3,7 @@ public with sharing class boardController {
     public static list<Board__c> getBoardRecords() {
         return [SELECT Id, Name, board_order__c FROM Board__c ORDER BY board_order__c ASC];
     }
-    @AuraEnabled(cacheable=true) //ORDER BY Order__c ASC
+    @AuraEnabled(cacheable=true)
     public static list<Board_column__c> getColumRecords(string boardId) {
         return [SELECT Id, Name, (SELECT Id, Name, Order__c, Board_column__c FROM Accounts__r), 
         (SELECT Id, Name, Order__c, Board_column__c FROM Contacts__r), 
@@ -27,19 +27,18 @@ public with sharing class boardController {
             System.debug('Error in updating record: ' + e.getMessage());
         }
     }
-    @AuraEnabled (cacheable=true)
+    @AuraEnabled (cacheable=true) //For card hard-coded values
     public static integer totalAmount(string colId){
         AggregateResult result = [SELECT SUM(expectedRevenue) total FROM Opportunity WHERE Board_column__c =: colId];
 
         // Check if the result is not null and the total is not null
         if (result != null && result.get('total') != null) {
-            // Cast the total to Decimal and then to Integer
             return (Integer)((Decimal)result.get('total'));
         }
         return 0;
     }
-    @AuraEnabled(cacheable=true)
-    public static Integer recCount(string colId){
+    @AuraEnabled(cacheable=true) //For card hard-coded values
+    public static Integer recCount(string colId){ 
         List<AggregateResult> results = [SELECT COUNT(Id) FROM Opportunity WHERE Board_column__c = :colId];
         if (!results.isEmpty()) {
             return (Integer)results[0].get('expr0');

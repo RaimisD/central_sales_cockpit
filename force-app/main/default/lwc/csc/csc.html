@@ -61,44 +61,38 @@
         <!-- board creation modal -->
         <template if:true={addBoardOpen}>
             <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
-                <!-- Modal header and close button -->
                 <div class="slds-modal__container">
                     <div class="slds-modal__header">
                         <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Create a board</h1>
-                        <!-- button to close the modal -->
                         <button class="slds-button slds-button_icon-inverse slds-modal__close" title="Close" onclick={handleCloseAddBoard}>
                             <lightning-icon icon-name="utility:close" alternative-text="Close"></lightning-icon>
                         </button>
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                        <!-- Content of the modal -->
                         <lightning-record-edit-form object-api-name="Board__c" onsuccess={handleCreateBoardSuccess} onsubmit={handleCreateBoardSubmit}>
                             <lightning-input-field field-name="Name" required></lightning-input-field>
                             <lightning-button class="slds-m-top_small" type="submit" label="Create Board"></lightning-button>
                         </lightning-record-edit-form>
                     </div>
                     <div class="slds-modal__footer">
-                        <!-- button to close the modal -->
                         <button class="slds-button slds-button_neutral" aria-label="Cancel" onclick={handleCloseAddBoard}>Cancel</button>
                     </div>
                 </div>
             </section>
             <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
         </template>
+
         <!-- add column modal -->
         <template if:true={addColumn}>
             <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
-                <!-- Modal header and close button -->
                 <div class="slds-modal__container">
                     <div class="slds-modal__header">
                         <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Add a column</h1>
-                        <!-- button to close the modal -->
                         <button class="slds-button slds-button_icon-inverse slds-modal__close" title="Close" onclick={handleCloseAddColumn}>
                             <lightning-icon icon-name="utility:close" alternative-text="Close"></lightning-icon>
                         </button>
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
-                        <!-- Content of the modal -->
                         <lightning-record-edit-form object-api-name="Board_column__c" onsuccess={handleAddColumnSuccess} onsubmit={handleAddColumnSubmit}>
                             <lightning-input-field field-name="Name" required></lightning-input-field>
                             <lightning-input-field field-name="Board__c"></lightning-input-field>
@@ -106,7 +100,6 @@
                         </lightning-record-edit-form>
                     </div>
                     <div class="slds-modal__footer">
-                        <!-- button to close the modal -->
                         <button class="slds-button slds-button_neutral" aria-label="Cancel and close" onclick={handleCloseAddColumn}>Cancel</button>
                     </div>
                 </div>
@@ -117,17 +110,14 @@
         <!-- board setting modal -->
         <template if:true={showSettings}>
             <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
-                <!-- Modal header and close button -->
                 <div class="slds-modal__container">
                     <div class="slds-modal__header">
                         <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate">Board settings</h1>
-                        <!-- button to close the modal -->
                         <button class="slds-button slds-button_icon-inverse slds-modal__close" title="Close" onclick={handleCloseSettings}>
                             <lightning-icon icon-name="utility:close" alternative-text="Close"></lightning-icon>
                         </button>
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
-                        <!-- Content of the modal -->
                         <template for:each={boardList} for:item="board" for:index="index">
                             <div key={board.Id} class="slds-box slds-m-bottom_small slds-align_absolute-center" 
                             draggable="true" 
@@ -153,7 +143,6 @@
                         <lightning-button label="Add board" title="Add board" onclick={handleAddBoard} class="slds-m-left_x-small slds-align_absolute-center"></lightning-button>
                     </div>
                     <div class="slds-modal__footer">
-                        <!-- button to close or save the modal -->
                         <button class="slds-button slds-button_neutral slds-float_right" aria-label="Close" onclick={handleCloseSettings}>Close</button>
                     </div>
                 </div>
@@ -164,24 +153,20 @@
         <!-- modal to edit name -->
         <template if:true={openEditor}>
             <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
-                <!-- Modal header and close button -->
                 <div class="slds-modal__container">
                     <div class="slds-modal__header">
                         <h1 id="modal-heading-04" class="slds-modal__title slds-hyphenate">Edit name</h1>
-                        <!-- button to close the modal -->
                         <button class="slds-button slds-button_icon-inverse slds-modal__close" title="Close" onclick={handleCancelRename}>
                             <lightning-icon icon-name="utility:close" alternative-text="Close"></lightning-icon>
                         </button>
                     </div>
                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-4">
-                        <!-- Content of the modal -->
                         <lightning-record-edit-form record-id={recordIdToEdit} object-api-name="Board__c" onsuccess={handleEditSuccess} onsubmit={handleEditSubmit}>
                             <lightning-input-field field-name="Name"></lightning-input-field>
                             <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="update" label="Update"></lightning-button>
                         </lightning-record-edit-form>
                     </div>
                     <div class="slds-modal__footer">
-                        <!-- button to close or save the modal -->
                         <button class="slds-button slds-button_neutral slds-float_right" aria-label="Cancel and close" onclick={handleCancelRename}>Cancel</button>
                     </div>
                 </div>

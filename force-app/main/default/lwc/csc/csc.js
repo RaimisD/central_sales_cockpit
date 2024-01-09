@@ -44,13 +44,14 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
         /* ---------BOARD TABS---------- */
     @track selectedTab;
-    handleTabSelect(event){ //checks which column is selected to pass value
+    handleTabSelect(event){
         this.selectedTab = event.target.value;
     }
     @api boards;
     @track boards;
     @track boardList = [];
     wiredBoardsResult;
+
     /* -----LOAD BOARDS----- */
     @wire(getBoardRecords)
     wiredBoards(result){
@@ -107,6 +108,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
     handleCreateBoardSubmit(event){
     }
+
     /* -----BOARD SETTING MODAL----- */
     @track showSettings = false;
     handleOpenSettings(event){
@@ -187,7 +189,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
         return iconMap[recordType] || 'standard:default';
     }
 
-    combineChildRecords(column) {
+    combineChildRecords(column) { //Puts all related objects in one arrray and sorts by Order__c ascending
         let combined = [];
         const recordTypes = ['Accounts__r', 'Contacts__r', 'Leads__r', 'Opportunities__r'];
         
@@ -220,7 +222,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
         if (result.data) {
             this.ElementList = result.data.map(column => ({
                 ...column,
-                childs: this.combineChildRecords(column)
+                childs: this.combineChildRecords(column) //adds the related record list to elementList
             }));
             this.columns = result.data;
             //console.log('ElementList--------> ', this.ElementList);
@@ -374,7 +376,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
                 return;
             }
             this.targetColId = columnId; //TARGET COL
-            this.updateColumn(this.recId, this.targetColId, this.objName);
+            this.updateColumn(this.recId, this.targetColId, this.objName); //Changes column
             const sourceColumnId = this.sourceColId;
             const newIndex = parseInt(event.target.dataset.cardindex, 10);
 
@@ -406,7 +408,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
     }
 
     createUpdateRecordInput(recordId, newOrder, objectName) {
-        // Map the object name to the API field name for Board_column__c
         const boardColumnFieldMap = {
             'Account': 'Accounts__r',
             'Opportunity': 'Opportunities__r',
@@ -424,7 +425,6 @@ export default class Csc extends NavigationMixin(LightningElement) {
         };
     }
     updateRecords(recInputs) {
-        // Handle the updates (for simplicity, using Promise.all here, but you may want to handle them individually)
         const updatePromises = recInputs.map(recordInput => updateRecord(recordInput));
         Promise.all(updatePromises)
         .then(() => {
@@ -457,8 +457,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
                     title: 'changed',
                     variant: 'success'
                 })
-            );
-            
+            );         
             //this.recId = undefined;
             //this.targetColId = undefined;
             //refreshApex(this.wiredColumnResult);
@@ -492,6 +491,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
             );
         }
     }
+
+    // EDIT COLUMN MODAL
     @track editColumn = false;
     @track colToEditName;
 
@@ -525,6 +526,7 @@ export default class Csc extends NavigationMixin(LightningElement) {
         }
         
     }
+    // --------REMOVE CARD---------
     @track currentType;
     handleEditColSubmit(event){}
     removeCard(event){
@@ -571,7 +573,8 @@ export default class Csc extends NavigationMixin(LightningElement) {
             );
         });
     }
-    // board drag and drop
+
+    // BOARD DRAG AND DROP
     @track dragBoardStart;
     boardDragStart(event){
         this.dragBoardStart = parseInt(event.currentTarget.dataset.index, 10);
